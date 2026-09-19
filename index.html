@@ -130,13 +130,13 @@
                     <span class="text-xl w-6 text-center">🗓️</span> Timeline
                 </a>
                 <a href="#" class="nav-link flex items-center gap-3 px-4 py-3.5 rounded-2xl hover:bg-slate-100 hover:text-slate-800 transition-all" data-view="employees">
-                    <span class="text-xl w-6 text-center">👯‍♀️</span> The Squad
+                    <span class="text-xl w-6 text-center">👯‍♀️</span> The Squad (Users)
                 </a>
                 <a href="#" class="nav-link flex items-center gap-3 px-4 py-3.5 rounded-2xl hover:bg-slate-100 hover:text-slate-800 transition-all" data-view="documents">
                     <span class="text-xl w-6 text-center">📁</span> Docs
                 </a>
                 <a href="#" class="nav-link flex items-center gap-3 px-4 py-3.5 rounded-2xl hover:bg-slate-100 hover:text-slate-800 transition-all mt-6" data-view="settings">
-                    <span class="text-xl w-6 text-center">⚙️</span> Config
+                    <span class="text-xl w-6 text-center">⚙️</span> Settings
                 </a>
             </nav>
 
@@ -875,7 +875,6 @@
             switchView('dashboard');
         }
 
-        // --- STREAMING_CHUNK:Setting up Event Listeners... ---
         function setupEventListeners() {
             // Login
             document.getElementById('loginForm').addEventListener('submit', handleLogin);
@@ -932,7 +931,6 @@
             document.getElementById('nextMonthBtn').addEventListener('click', () => changeMonth(1));
         }
 
-        // --- Employee / User Logic ---
         function handleSaveProfile(e) {
             e.preventDefault();
             const pronouns = document.getElementById('myPronouns').value.trim();
@@ -1056,7 +1054,6 @@
             }
         }
 
-        // --- STREAMING_CHUNK:GitHub API Integration... ---
         function checkGitHubStatus() {
             const isAuth = !!(state.ghAuth.token && state.ghAuth.repo);
             const warningBanner = document.getElementById('ghWarningBanner');
@@ -1132,11 +1129,10 @@
             return response.json();
         }
 
-        // --- Data Fetching ---
         function refreshData() {
             if(!state.ghAuth.token) return;
             fetchTasks();
-            if(!els.views[4].classList.contains('hidden')) fetchDocuments(); 
+            if(!document.getElementById('documentsView').classList.contains('hidden')) fetchDocuments(); 
         }
 
         async function fetchTasks() {
@@ -1163,7 +1159,6 @@
             }
         }
 
-        // --- STREAMING_CHUNK:Rendering Dashboard and Kanban... ---
         function updateDashboardStats() {
             const total = state.tasks.length;
             const completed = state.tasks.filter(t => t.status === 'closed').length;
@@ -1247,7 +1242,6 @@
             document.getElementById('count-done').textContent = counts['closed'];
         }
 
-        // --- STREAMING_CHUNK:Task Drag/Drop and Forms... ---
         function allowDrop(ev) { ev.preventDefault(); }
 
         function renderQuickTags() {
@@ -1387,7 +1381,6 @@
             await githubApi(`/issues/${taskNumber}`, 'PATCH', { state: newState === 'closed' ? 'closed' : 'open', labels: labels });
         }
 
-        // --- STREAMING_CHUNK:Calendar and Documents... ---
         function renderCalendar() {
             const grid = document.getElementById('calendarGrid');
             grid.innerHTML = '';
@@ -1425,7 +1418,6 @@
         }
         function changeMonth(delta) { state.currentDate.setMonth(state.currentDate.getMonth() + delta); renderCalendar(); }
 
-        // Documents
         async function fetchDocuments() {
             const tbody = document.getElementById('documentsTableBody');
             tbody.innerHTML = '<tr><td colspan="4" class="py-8 text-center text-slate-500 font-bold animate-pulse">Loading files... ⏳</td></tr>';
@@ -1494,7 +1486,6 @@
             } catch(err) { showToast(`Delete failed: ${err.message}`, 'error'); }
         }
 
-        // --- STREAMING_CHUNK:Utilities... ---
         function switchView(viewId) {
             els.navLinks.forEach(link => {
                 if (link.getAttribute('data-view') === viewId) {
