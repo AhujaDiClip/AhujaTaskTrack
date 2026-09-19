@@ -25,14 +25,18 @@
         }
     </script>
     <style>
+        :root {
+            --bg-color: #fdfbf7;
+        }
         body { 
             font-family: 'Plus Jakarta Sans', sans-serif; 
-            background-color: #fdfbf7;
+            background-color: var(--bg-color);
             background-image: radial-gradient(at 0% 0%, hsla(253,16%,7%,0) 0, transparent 50%), 
                               radial-gradient(at 100% 0%, hsla(271,81%,89%,1) 0, transparent 50%), 
                               radial-gradient(at 100% 100%, hsla(331,73%,87%,1) 0, transparent 50%), 
                               radial-gradient(at 0% 100%, hsla(202,74%,89%,1) 0, transparent 50%);
             background-attachment: fixed;
+            transition: background-color 0.4s ease;
         }
         .custom-scrollbar::-webkit-scrollbar { width: 8px; height: 8px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
@@ -42,12 +46,53 @@
         body.modal-active { overflow: hidden !important; }
         @keyframes popIn { 0% { transform: scale(0.95) translateY(10px); opacity: 0; } 100% { transform: scale(1) translateY(0); opacity: 1; } }
         @keyframes slideRight { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        @keyframes shimmer { 0% { background-position: -400px 0; } 100% { background-position: 400px 0; } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         .toast-enter { animation: slideRight 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
         .view-section { animation: popIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
         .glass-panel { background: rgba(255, 255, 255, 0.65); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.8); }
+        .skeleton { background: linear-gradient(90deg, #f1f1f4 25%, #e9e9f2 37%, #f1f1f4 63%); background-size: 400px 100%; animation: shimmer 1.4s ease infinite; border-radius: 1rem; }
+        .fade-in { animation: fadeIn 0.3s ease forwards; }
+
+        /* ---- SIDEBAR (fixed responsive behavior, no inline-style specificity fights) ---- */
+        #sidebar { transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
+        @media (max-width: 767px) {
+            #sidebar.sidebar-closed { transform: translateX(-120%); }
+        }
+
+        /* ---- DARK MODE ---- */
+        html.dark body { --bg-color: #0f0f15; background-color: #0f0f15;
+            background-image: radial-gradient(at 0% 0%, hsla(258,50%,20%,0.4) 0, transparent 50%),
+                              radial-gradient(at 100% 0%, hsla(271,60%,20%,0.35) 0, transparent 50%),
+                              radial-gradient(at 100% 100%, hsla(331,50%,18%,0.35) 0, transparent 50%),
+                              radial-gradient(at 0% 100%, hsla(202,55%,18%,0.35) 0, transparent 50%);
+        }
+        html.dark .glass-panel { background: rgba(24, 24, 32, 0.65); border-color: rgba(255,255,255,0.08); }
+        html.dark body { color: #e5e5ec; }
+        html.dark .bg-white { background-color: #1a1a24 !important; }
+        html.dark .bg-white\/40, html.dark .bg-white\/50, html.dark .bg-white\/20 { background-color: rgba(255,255,255,0.04) !important; }
+        html.dark .text-slate-800 { color: #f1f1f7 !important; }
+        html.dark .text-slate-700 { color: #d8d8e3 !important; }
+        html.dark .text-slate-600 { color: #b8b8c8 !important; }
+        html.dark .text-slate-500 { color: #9494a8 !important; }
+        html.dark .border-slate-100, html.dark .border-slate-200 { border-color: rgba(255,255,255,0.08) !important; }
+        html.dark .bg-slate-50 { background-color: rgba(255,255,255,0.05) !important; }
+        html.dark .skeleton { background: linear-gradient(90deg, #1e1e28 25%, #26263200 37%, #1e1e28 63%); background-size: 400px 100%; }
+
+        /* ---- OFFLINE BANNER ---- */
+        #offlineBanner { transition: transform 0.3s ease; }
+
+        /* micro-interactions */
+        button, .nav-link, a { -webkit-tap-highlight-color: transparent; }
+        button:active:not(:disabled) { transform: scale(0.96); }
+        .nav-link { position: relative; overflow: hidden; }
+        input:focus, textarea:focus, select:focus { box-shadow: 0 0 0 4px rgba(139,92,246,0.12); }
     </style>
 </head>
 <body class="text-gray-800 h-screen overflow-hidden flex selection:bg-fuchsia-200 selection:text-fuchsia-900">
+    <div id="offlineBanner" class="hidden fixed top-0 left-0 right-0 z-[300] bg-slate-900 text-white text-center text-sm font-bold py-2 shadow-lg">
+        📡 You're offline — showing cached data. Some actions are paused until you're back online.
+    </div>
 
     <!-- LOGIN SCREEN -->
     <div id="loginScreen" class="fixed inset-0 z-[100] flex items-center justify-center backdrop-blur-xl bg-white/30 transition-opacity duration-500">
@@ -83,7 +128,7 @@
     <div id="mainApp" class="flex-1 flex h-full hidden w-full p-2 sm:p-4 gap-4">
         
         <!-- SIDEBAR -->
-        <aside class="w-64 glass-panel rounded-[2rem] flex flex-col h-full flex-shrink-0 transition-transform duration-300 md:translate-x-0 absolute md:relative z-40 shadow-float" id="sidebar" style="transform: translateX(-120%);">
+        <aside class="w-64 glass-panel rounded-[2rem] flex flex-col h-full flex-shrink-0 md:translate-x-0 absolute md:relative z-40 shadow-float sidebar-closed" id="sidebar">
             <div class="h-20 flex items-center px-6 justify-between pt-2">
                 <div class="flex items-center gap-3 font-extrabold text-2xl tracking-tight text-slate-800">
                     <span class="text-3xl">✨</span> TaskTrack
@@ -140,6 +185,7 @@
                     </button>
                     <h1 class="text-3xl font-extrabold text-slate-800 tracking-tight" id="headerTitle">Home Base</h1>
                 </div>
+                <button id="darkModeToggle" title="Toggle dark mode" aria-label="Toggle dark mode" class="w-11 h-11 bg-white shadow-sm border border-slate-100 rounded-2xl flex items-center justify-center text-lg hover:-translate-y-0.5 transition-all active:scale-90">🌙</button>
             </header>
 
             <div class="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 custom-scrollbar relative" id="mainContent">
@@ -248,6 +294,10 @@
                                         <input type="text" id="ghRepo" placeholder="username/repo-name" class="w-full px-5 py-3.5 bg-slate-50 border-2 border-slate-100 rounded-2xl focus:border-pink-400 outline-none font-mono text-sm transition-colors">
                                         <p class="text-xs text-slate-400 font-medium mt-2 ml-1">Format: username/repo (No URLs!)</p>
                                     </div>
+                                    <label class="flex items-start gap-3 bg-pink-50/60 border border-pink-100 rounded-2xl p-4 cursor-pointer">
+                                        <input type="checkbox" id="ghRememberMe" checked class="mt-1 w-4 h-4 accent-pink-500">
+                                        <span class="text-sm text-slate-600 font-medium">🔒 Remember my token on this device (unchecking stores it only for this browser tab/session — safer on shared computers).</span>
+                                    </label>
                                 </div>
                                 <div class="pt-2 flex justify-end gap-3">
                                     <button id="disconnectGhBtn" class="hidden px-6 py-3.5 bg-white border-2 border-red-100 text-red-500 rounded-2xl hover:bg-red-50 hover:border-red-200 font-bold transition-all">Disconnect</button>
@@ -319,7 +369,7 @@
 
                 <!-- VIEW: Tasks (Kanban) -->
                 <div id="tasksView" class="view-section hidden h-full flex flex-col">
-                    <div class="flex justify-between items-center mb-6">
+                    <div class="flex justify-between items-center mb-4 gap-4 flex-wrap">
                         <div>
                             <h2 class="text-3xl font-extrabold text-slate-800 tracking-tight">The Board 📋</h2>
                             <p class="text-slate-500 font-medium mt-1">Drag and drop issues directly to GitHub.</p>
@@ -327,6 +377,10 @@
                         <button onclick="openModal('newTaskModal')" class="bg-violet-500 hover:bg-violet-600 text-white px-6 py-3 rounded-2xl font-bold shadow-lg shadow-violet-500/30 transition-all hover:-translate-y-1 active:scale-95 flex items-center gap-2">
                             <i class="fa-solid fa-plus"></i> New Task
                         </button>
+                    </div>
+                    <div class="relative mb-6 max-w-md">
+                        <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                        <input type="text" id="boardSearchInput" placeholder="Search tasks..." class="w-full pl-11 pr-4 py-3 bg-white border border-slate-100 rounded-2xl outline-none text-slate-700 font-medium shadow-sm focus:border-violet-300">
                     </div>
                     <div class="flex-1 flex gap-6 overflow-x-auto custom-scrollbar pb-4 -mx-4 px-4 sm:mx-0 sm:px-0">
                         <div class="glass-panel rounded-[2rem] w-80 flex-shrink-0 flex flex-col max-h-full border border-white shadow-sm overflow-hidden">
@@ -391,9 +445,13 @@
 
                 <!-- VIEW: Documents -->
                 <div id="documentsView" class="view-section hidden">
-                    <div class="flex justify-between items-center mb-6">
+                    <div class="flex justify-between items-center mb-6 gap-4 flex-wrap">
                         <div><h2 class="text-3xl font-extrabold text-slate-800 tracking-tight">Docs & Files 📁</h2></div>
-                        <div class="flex gap-3">
+                        <div class="flex gap-3 items-center flex-wrap">
+                            <div class="relative">
+                                <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                                <input type="text" id="docSearchInput" placeholder="Search files..." class="pl-11 pr-4 py-3 bg-white border border-slate-100 rounded-2xl outline-none text-slate-700 font-medium shadow-sm focus:border-blue-300 w-48 sm:w-64">
+                            </div>
                             <button onclick="fetchDocuments()" class="px-4 py-3 bg-white shadow-sm border border-slate-100 rounded-2xl text-slate-600 hover:bg-slate-50 font-bold"><i class="fa-solid fa-rotate-right"></i></button>
                             <button onclick="openModal('uploadDocModal')" class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-2xl font-bold shadow-lg shadow-blue-500/30 flex items-center gap-2"><i class="fa-solid fa-cloud-arrow-up"></i> Upload</button>
                         </div>
@@ -546,6 +604,61 @@
     <div id="toastContainer" class="fixed bottom-6 right-6 z-[200] flex flex-col gap-3 pointer-events-none"></div>
 
     <script>
+        // --- 0. SAFE STORAGE + GLOBAL ERROR HANDLING (robustness layer) ---
+        const memoryStore = {}; // in-memory fallback if localStorage is blocked (private mode, quota, etc.)
+        let storageDegraded = false;
+        function safeGet(key) {
+            try { return localStorage.getItem(key); } catch (e) { storageDegraded = true; return (key in memoryStore) ? memoryStore[key] : null; }
+        }
+        function safeSet(key, val) {
+            try { localStorage.setItem(key, val); return true; }
+            catch (e) { storageDegraded = true; memoryStore[key] = val; return false; }
+        }
+        function safeRemove(key) {
+            try { localStorage.removeItem(key); } catch (e) { storageDegraded = true; delete memoryStore[key]; }
+        }
+        function safeJsonGet(key, fallback) {
+            try { const v = safeGet(key); return v ? JSON.parse(v) : fallback; } catch (e) { return fallback; }
+        }
+
+        let _lastErrorToastAt = 0;
+        function reportUnexpectedError(msg) {
+            console.error('[TaskTrack]', msg);
+            const now = Date.now();
+            if (now - _lastErrorToastAt > 4000) { // avoid spamming toasts if errors cascade
+                _lastErrorToastAt = now;
+                showToast("Something glitched, but the app is still running. Try again 🙏", 'error');
+            }
+        }
+        window.addEventListener('error', (e) => reportUnexpectedError(e.message || 'Unknown error'));
+        window.addEventListener('unhandledrejection', (e) => reportUnexpectedError((e.reason && e.reason.message) || 'Unhandled promise rejection'));
+
+        // --- Lightweight password hashing (SHA-256 via WebCrypto, with a safe same-environment fallback) ---
+        async function hashPassword(pw) {
+            try {
+                if (window.crypto && window.crypto.subtle && window.isSecureContext) {
+                    const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(String(pw)));
+                    return 'sha256:' + Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+                }
+            } catch (e) { console.warn('WebCrypto unavailable, using fallback password storage.'); }
+            return 'plain:' + pw; // never blocks login — same browser will compute the same fallback consistently
+        }
+        function isHashed(pw) { return typeof pw === 'string' && (pw.startsWith('sha256:') || pw.startsWith('plain:')); }
+
+        // --- Minimal HTML sanitizer for markdown-rendered GitHub issue bodies (XSS defense) ---
+        function sanitizeHtml(html) {
+            const doc = new DOMParser().parseFromString(html, 'text/html');
+            doc.querySelectorAll('script, iframe, object, embed, style, link, form').forEach(el => el.remove());
+            doc.querySelectorAll('*').forEach(el => {
+                [...el.attributes].forEach(attr => {
+                    const n = attr.name.toLowerCase();
+                    if (n.startsWith('on')) el.removeAttribute(attr.name);
+                    if ((n === 'href' || n === 'src') && /^\s*javascript:/i.test(attr.value)) el.removeAttribute(attr.name);
+                });
+            });
+            return doc.body.innerHTML;
+        }
+
         // --- 1. SAFE DATA INITIALIZATION ---
         const defaultUsers = [
             { username: 'Admin', password: 'password123', role: 'admin', avatar: '😎', bg: 'from-slate-700 to-slate-900', pronouns: 'They/Them', bio: 'Keeping the servers running and the vibes immaculate.' },
@@ -557,7 +670,7 @@
         let appUsers = [];
         // Using 'tt_users_v3' to force a fresh slate and avoid previous corruption
         try {
-            const stored = localStorage.getItem('tt_users_v3');
+            const stored = safeGet('tt_users_v3');
             if (stored) {
                 appUsers = JSON.parse(stored);
                 if (!Array.isArray(appUsers) || appUsers.length === 0) throw new Error("Invalid stored data");
@@ -567,52 +680,73 @@
         } catch (e) {
             console.log("Initializing fresh database...");
             appUsers = [...defaultUsers];
-            localStorage.setItem('tt_users_v3', JSON.stringify(appUsers));
+        }
+
+        // Migrate any plaintext passwords (fresh seed, or legacy data from before hashing existed) to hashed form.
+        async function ensurePasswordsHashed() {
+            let changed = false;
+            for (const u of appUsers) {
+                if (!isHashed(u.password)) { u.password = await hashPassword(u.password); changed = true; }
+            }
+            if (changed) safeSet('tt_users_v3', JSON.stringify(appUsers));
         }
 
         const state = {
             currentUser: null,
             ghAuth: { 
-                username: localStorage.getItem('tt_gh_username_v3') || '', 
-                token: localStorage.getItem('tt_gh_token_v3') || '', 
-                repo: localStorage.getItem('tt_gh_repo_v3') || '' 
+                username: safeGet('tt_gh_username_v3') || '', 
+                token: safeGet('tt_gh_token_v3') || sessionStorage.getItem('tt_gh_token_session_v3') || '', 
+                repo: safeGet('tt_gh_repo_v3') || '',
+                remember: safeGet('tt_gh_remember_v3') !== 'false'
             },
             tasks: [], 
             currentDate: new Date(), 
-            draggedTaskId: null
+            draggedTaskId: null,
+            isOnline: navigator.onLine,
+            boardSearch: '',
+            docSearch: ''
         };
 
         try {
-            const storedUser = localStorage.getItem('tt_currentUser_v3');
+            const storedUser = safeGet('tt_currentUser_v3');
             if (storedUser) state.currentUser = JSON.parse(storedUser);
         } catch (e) { console.error("Corrupted current user state."); }
 
         // Factory Reset Utility
         window.factoryReset = function() {
             if(confirm("Are you sure? This will wipe all local data and reset the app.")) {
-                localStorage.clear();
+                try { localStorage.clear(); } catch(e) {}
+                try { sessionStorage.clear(); } catch(e) {}
                 location.reload();
             }
         }
 
         // --- 2. CORE FLOW & AUTH ---
-        function init() {
+        async function init() {
             console.log("App Initialized successfully!");
+            applyDarkModePreference();
             setupEventListeners();
+            setupOfflineDetection();
+            await ensurePasswordsHashed();
+            if (storageDegraded) showToast("Your browser is blocking local storage (e.g. private mode) — changes may not be saved between visits.", 'warning');
             if (state.currentUser) launchApp();
             else document.getElementById('loginScreen').classList.remove('hidden');
         }
 
-        function handleLogin(e) {
+        async function handleLogin(e) {
             e.preventDefault();
+            const btn = document.querySelector('#loginForm button');
             const userIn = document.getElementById('loginUsername').value.trim();
             const passIn = document.getElementById('loginPassword').value;
-            const user = appUsers.find(u => u.username.toLowerCase() === userIn.toLowerCase() && u.password === passIn);
+            if (!userIn || !passIn) return showToast('Enter both username and password.', 'error');
+
+            btn.disabled = true;
+            const hashedAttempt = await hashPassword(passIn);
+            const user = appUsers.find(u => u.username.toLowerCase() === userIn.toLowerCase() && u.password === hashedAttempt);
             
             if (user) {
                 state.currentUser = user;
-                localStorage.setItem('tt_currentUser_v3', JSON.stringify(user));
-                const btn = document.querySelector('#loginForm button');
+                safeSet('tt_currentUser_v3', JSON.stringify(user));
                 btn.innerHTML = 'Vibe Check Passed ✅'; btn.classList.add('bg-emerald-500');
                 showToast('Welcome back, ' + user.username + '!', 'success');
                 
@@ -621,6 +755,7 @@
                     setTimeout(() => { document.getElementById('loginScreen').classList.add('hidden'); launchApp(); }, 500);
                 }, 800);
             } else {
+                btn.disabled = false;
                 showToast('Wrong vibes (invalid username or password)', 'error');
             }
         }
@@ -628,7 +763,7 @@
         function handleLogout(e) {
             if(e) e.stopPropagation();
             state.currentUser = null;
-            localStorage.removeItem('tt_currentUser_v3');
+            safeRemove('tt_currentUser_v3');
             location.reload(); 
         }
 
@@ -655,6 +790,7 @@
                 document.getElementById('ghUsername').value = state.ghAuth.username;
                 document.getElementById('ghToken').value = state.ghAuth.token;
                 document.getElementById('ghRepo').value = state.ghAuth.repo;
+                if (document.getElementById('ghRememberMe')) document.getElementById('ghRememberMe').checked = state.ghAuth.remember;
             } else {
                 document.getElementById('adminSettingsBlock').classList.add('hidden');
                 document.getElementById('nonAdminNotice').classList.remove('hidden');
@@ -663,6 +799,39 @@
             checkGitHubStatus();
             renderEmployees();
             switchView('dashboard');
+        }
+
+        // --- OFFLINE DETECTION ---
+        function setupOfflineDetection() {
+            const banner = document.getElementById('offlineBanner');
+            function update() {
+                state.isOnline = navigator.onLine;
+                if (!state.isOnline) {
+                    banner.classList.remove('hidden');
+                } else {
+                    if (!banner.classList.contains('hidden')) { showToast("Back online! ✨", 'success'); refreshData(); }
+                    banner.classList.add('hidden');
+                }
+            }
+            window.addEventListener('online', update);
+            window.addEventListener('offline', update);
+            update();
+        }
+
+        // --- DARK MODE ---
+        function applyDarkModePreference() {
+            const pref = safeGet('tt_dark_mode_v3');
+            const isDark = pref === 'true';
+            document.documentElement.classList.toggle('dark', isDark);
+            const btn = document.getElementById('darkModeToggle');
+            if (btn) btn.innerHTML = isDark ? '☀️' : '🌙';
+        }
+        function toggleDarkMode() {
+            const isDark = !document.documentElement.classList.contains('dark');
+            document.documentElement.classList.toggle('dark', isDark);
+            safeSet('tt_dark_mode_v3', String(isDark));
+            const btn = document.getElementById('darkModeToggle');
+            if (btn) btn.innerHTML = isDark ? '☀️' : '🌙';
         }
 
         function setupEventListeners() {
@@ -677,9 +846,15 @@
                     closeMobileSidebar(); 
                 });
             });
-            document.getElementById('openSidebarBtn').addEventListener('click', () => { document.getElementById('sidebar').style.transform = 'translateX(0)'; document.getElementById('sidebarOverlay').classList.remove('hidden'); });
+            document.getElementById('openSidebarBtn').addEventListener('click', () => { document.getElementById('sidebar').classList.remove('sidebar-closed'); document.getElementById('sidebarOverlay').classList.remove('hidden'); });
             document.getElementById('closeSidebarBtn').addEventListener('click', closeMobileSidebar);
             document.getElementById('sidebarOverlay').addEventListener('click', closeMobileSidebar);
+            const dmToggle = document.getElementById('darkModeToggle');
+            if (dmToggle) dmToggle.addEventListener('click', (e) => { e.stopPropagation(); toggleDarkMode(); });
+            const boardSearchEl = document.getElementById('boardSearchInput');
+            if (boardSearchEl) boardSearchEl.addEventListener('input', (e) => { state.boardSearch = e.target.value; renderKanban(); });
+            const docSearchEl = document.getElementById('docSearchInput');
+            if (docSearchEl) docSearchEl.addEventListener('input', (e) => { state.docSearch = e.target.value; const cached = safeJsonGet('tt_cache_docs_v3', []); renderDocumentsTable(cached, !state.isOnline); if (state.isOnline) fetchDocuments(); });
 
             // Settings 
             document.getElementById('toggleTokenVisibility').addEventListener('click', function() {
@@ -711,27 +886,32 @@
             const userIndex = appUsers.findIndex(u => u.username === state.currentUser.username);
             if (userIndex !== -1) {
                 appUsers[userIndex].pronouns = pronouns; appUsers[userIndex].bio = bio;
-                localStorage.setItem('tt_users_v3', JSON.stringify(appUsers));
-                localStorage.setItem('tt_currentUser_v3', JSON.stringify(state.currentUser));
+                safeSet('tt_users_v3', JSON.stringify(appUsers));
+                safeSet('tt_currentUser_v3', JSON.stringify(state.currentUser));
             }
             renderEmployees();
             showToast('Profile vibe updated! 🪪', 'success');
             if (goHome) switchView('dashboard');
         }
 
-        function handleAddUser(e) {
+        async function handleAddUser(e) {
             e.preventDefault();
             const name = document.getElementById('settingsEmpName').value.trim();
+            const rawPass = document.getElementById('settingsEmpPass').value.trim();
+            if (!name || !rawPass) return showToast('Name and password are required.', 'error');
             if (appUsers.find(u => u.username.toLowerCase() === name.toLowerCase())) return showToast('User already exists!', 'error');
             
             const emojis = ['👾','🦊','🐼','🦄','🦖','🍩','🎮','🎨'];
             const bgs = ['from-indigo-400 to-cyan-400', 'from-pink-400 to-rose-400', 'from-lime-400 to-emerald-400', 'from-amber-400 to-orange-500'];
+            const submitBtn = e.target.querySelector('button[type=submit]');
+            if (submitBtn) submitBtn.disabled = true;
             appUsers.push({
-                username: name, password: document.getElementById('settingsEmpPass').value.trim(), role: document.getElementById('settingsEmpRole').value,
+                username: name, password: await hashPassword(rawPass), role: document.getElementById('settingsEmpRole').value,
                 avatar: emojis[Math.floor(Math.random() * emojis.length)], bg: bgs[Math.floor(Math.random() * bgs.length)], pronouns: '', bio: ''
             });
-            localStorage.setItem('tt_users_v3', JSON.stringify(appUsers));
+            safeSet('tt_users_v3', JSON.stringify(appUsers));
             document.getElementById('addEmployeeForm').reset();
+            if (submitBtn) submitBtn.disabled = false;
             renderEmployees(); showToast(`${name} added!`, 'success');
         }
 
@@ -750,7 +930,7 @@
                             <div class="absolute inset-0 bg-white/20 backdrop-blur-[2px]"></div>
                             <div class="absolute -bottom-8 left-6">
                                 <div class="w-24 h-24 rounded-2xl bg-white flex items-center justify-center text-5xl border-4 border-white shadow-md relative rotate-3 group-hover:rotate-0 transition-transform">
-                                    ${emp.avatar} ${isActive ? '<div class="absolute -bottom-1 -right-1 w-5 h-5 bg-emerald-400 border-[3px] border-white rounded-full"></div>' : ''}
+                                    ${emp.avatar} ${isActive ? '<div class="absolute -bottom-1 -right-1 w-5 h-5 bg-emerald-400 border-[3px] border-white rounded-full animate-pulse"></div>' : ''}
                                 </div>
                             </div>
                             <div class="absolute top-4 right-4 bg-white/30 backdrop-blur-md px-4 py-1.5 rounded-full text-white text-[10px] uppercase font-black border border-white/50">${emp.role}</div>
@@ -780,7 +960,7 @@
         }
 
         window.removeUser = function(index) {
-            if(confirm('Kick this user?')) { appUsers.splice(index, 1); localStorage.setItem('tt_users_v3', JSON.stringify(appUsers)); renderEmployees(); showToast('User removed.', 'info'); }
+            if(confirm('Kick this user?')) { appUsers.splice(index, 1); safeSet('tt_users_v3', JSON.stringify(appUsers)); renderEmployees(); showToast('User removed.', 'info'); }
         };
 
         // --- 3. GITHUB API LOGIC ---
@@ -795,36 +975,73 @@
         }
 
         function saveGhSettings() {
+            if (!state.isOnline) return showToast("You're offline — connect to the internet first.", 'warning');
             const user = document.getElementById('ghUsername').value.trim(), token = document.getElementById('ghToken').value.trim(), repo = document.getElementById('ghRepo').value.trim();
-            if (!token || !repo || !repo.includes('/')) return showToast('Valid Token and owner/repo required.', 'error');
+            const remember = document.getElementById('ghRememberMe') ? document.getElementById('ghRememberMe').checked : true;
+            if (!token || !repo || !repo.includes('/')) return showToast('Valid Token and owner/repo required (format: owner/repo).', 'error');
             const btn = document.getElementById('saveGhSettingsBtn'); btn.innerHTML = 'Connecting...'; btn.disabled = true;
 
-            fetch(`https://api.github.com/repos/${repo}`, { headers: { 'Authorization': `token ${token}`, 'Accept': 'application/vnd.github.v3+json' } })
-            .then(res => { if (res.ok) return res.json(); throw new Error('Connection failed.'); })
-            .then(() => {
-                localStorage.setItem('tt_gh_username_v3', user); localStorage.setItem('tt_gh_token_v3', token); localStorage.setItem('tt_gh_repo_v3', repo);
-                state.ghAuth = { username: user, token, repo }; showToast('Connected! ✨', 'success'); checkGitHubStatus();
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 12000);
+            fetch(`https://api.github.com/repos/${repo}`, { headers: { 'Authorization': `token ${token}`, 'Accept': 'application/vnd.github.v3+json' }, signal: controller.signal })
+            .then(res => {
+                clearTimeout(timeoutId);
+                if (res.ok) return res.json();
+                if (res.status === 401) throw new Error('Invalid token — check your Personal Access Token.');
+                if (res.status === 404) throw new Error('Repo not found — check spelling or your token\'s access.');
+                if (res.status === 403) throw new Error('Access forbidden — token may lack permissions or hit a rate limit.');
+                throw new Error(`Connection failed (HTTP ${res.status}).`);
             })
-            .catch(err => showToast(err.message, 'error')).finally(() => { btn.innerHTML = 'Connect App'; btn.disabled = false; });
+            .then(() => {
+                safeSet('tt_gh_username_v3', user); safeSet('tt_gh_repo_v3', repo); safeSet('tt_gh_remember_v3', String(remember));
+                if (remember) { safeSet('tt_gh_token_v3', token); try { sessionStorage.removeItem('tt_gh_token_session_v3'); } catch(e){} }
+                else { try { sessionStorage.setItem('tt_gh_token_session_v3', token); } catch(e){} safeRemove('tt_gh_token_v3'); }
+                state.ghAuth = { username: user, token, repo, remember }; showToast('Connected! ✨', 'success'); checkGitHubStatus();
+            })
+            .catch(err => showToast(err.name === 'AbortError' ? 'Connection timed out — check your network.' : err.message, 'error'))
+            .finally(() => { btn.innerHTML = 'Connect App'; btn.disabled = false; });
         }
 
         function disconnectGhAuth() {
-            localStorage.removeItem('tt_gh_username_v3'); localStorage.removeItem('tt_gh_token_v3'); localStorage.removeItem('tt_gh_repo_v3');
-            state.ghAuth = { username: '', token: '', repo: '' }; checkGitHubStatus(); showToast('Disconnected', 'info');
+            safeRemove('tt_gh_username_v3'); safeRemove('tt_gh_token_v3'); safeRemove('tt_gh_repo_v3');
+            try { sessionStorage.removeItem('tt_gh_token_session_v3'); } catch(e){}
+            state.ghAuth = { username: '', token: '', repo: '', remember: true }; checkGitHubStatus(); showToast('Disconnected', 'info');
         }
 
         async function githubApi(endpoint, method = 'GET', body = null) {
             if (!state.ghAuth.token) throw new Error("No token");
-            const options = { method, headers: { 'Authorization': `token ${state.ghAuth.token}`, 'Accept': 'application/vnd.github.v3+json', 'Content-Type': 'application/json' } };
+            if (!state.isOnline) throw new Error("OFFLINE");
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 15000);
+            const options = { method, headers: { 'Authorization': `token ${state.ghAuth.token}`, 'Accept': 'application/vnd.github.v3+json', 'Content-Type': 'application/json' }, signal: controller.signal };
             if (body) options.body = JSON.stringify(body);
-            const response = await fetch(`https://api.github.com/repos/${state.ghAuth.repo}${endpoint}`, options);
-            if (!response.ok) throw new Error(`API Error ${response.status}`);
+            let response;
+            try {
+                response = await fetch(`https://api.github.com/repos/${state.ghAuth.repo}${endpoint}`, options);
+            } catch (e) {
+                clearTimeout(timeoutId);
+                if (e.name === 'AbortError') throw new Error('Request timed out. Check your connection and try again.');
+                throw new Error('Network error — are you connected to the internet?');
+            }
+            clearTimeout(timeoutId);
+            if (!response.ok) {
+                if (response.status === 401) throw new Error('GitHub token is invalid or expired.');
+                if (response.status === 403) {
+                    const remaining = response.headers.get('x-ratelimit-remaining');
+                    if (remaining === '0') throw new Error('GitHub API rate limit hit — try again in a few minutes.');
+                    throw new Error('Access forbidden — check token permissions.');
+                }
+                if (response.status === 404) throw new Error('Repo or resource not found.');
+                if (response.status === 422) throw new Error('GitHub rejected that request — check the data you entered.');
+                throw new Error(`GitHub API error (${response.status})`);
+            }
             if (response.status === 204) return null; return response.json();
         }
 
         function refreshData() { if(state.ghAuth.token) { fetchTasks(); if(!document.getElementById('documentsView').classList.contains('hidden')) fetchDocuments(); } }
 
         async function fetchTasks() {
+            renderKanbanSkeleton();
             try {
                 const issues = await githubApi('/issues?state=all&per_page=100');
                 state.tasks = issues.filter(i => !i.pull_request).map(i => {
@@ -832,8 +1049,25 @@
                     let st = i.state === 'closed' ? 'closed' : (i.labels.some(l => l.name.toLowerCase() === 'in progress' || l.name.toLowerCase() === 'doing') ? 'in-progress' : 'open');
                     return { id: i.id, number: i.number, title: i.title, body: i.body || '', status: st, assignees: i.assignees.map(a => ({ login: a.login, avatar_url: a.avatar_url })), dueDate: due, created_at: i.created_at, html_url: i.html_url, labels: i.labels };
                 });
+                safeSet('tt_cache_tasks_v3', JSON.stringify(state.tasks)); // cache for offline fallback
                 updateDashboardStats(); renderKanban(); renderCalendar();
-            } catch (e) { console.warn("Task fetch failed", e); }
+            } catch (e) {
+                console.warn("Task fetch failed", e);
+                const cached = safeJsonGet('tt_cache_tasks_v3', null);
+                if (cached) {
+                    state.tasks = cached;
+                    updateDashboardStats(); renderKanban(); renderCalendar();
+                    showToast('Using cached tasks — ' + (e.message === 'OFFLINE' ? "you're offline." : e.message), 'warning');
+                } else if (e.message !== 'No token') {
+                    showToast(e.message === 'OFFLINE' ? "You're offline and there's no cached data yet." : e.message, 'error');
+                    document.getElementById('col-todo').innerHTML = document.getElementById('col-inprogress').innerHTML = document.getElementById('col-done').innerHTML = '';
+                }
+            }
+        }
+
+        function renderKanbanSkeleton() {
+            const skel = Array.from({length: 2}).map(() => `<div class="skeleton h-24 rounded-2xl mb-3"></div>`).join('');
+            ['col-todo','col-inprogress','col-done'].forEach(id => { const el = document.getElementById(id); if (el && !el.children.length) el.innerHTML = skel; });
         }
 
         function updateDashboardStats() {
@@ -853,10 +1087,13 @@
             const counts = { 'open': 0, 'in-progress': 0, 'closed': 0 };
             Object.values(cols).forEach(c => c.innerHTML = '');
 
-            state.tasks.forEach(t => {
+            const q = (state.boardSearch || '').toLowerCase().trim();
+            const visibleTasks = q ? state.tasks.filter(t => t.title.toLowerCase().includes(q) || (t.body || '').toLowerCase().includes(q) || String(t.number).includes(q)) : state.tasks;
+
+            visibleTasks.forEach(t => {
                 counts[t.status]++;
                 const card = document.createElement('div');
-                card.className = "bg-white p-4 rounded-2xl shadow-sm border border-slate-100 cursor-grab hover:shadow-md hover:border-violet-200 transition-all active:scale-95 group";
+                card.className = "bg-white p-4 rounded-2xl shadow-sm border border-slate-100 cursor-grab hover:shadow-md hover:border-violet-200 transition-all active:scale-95 group fade-in";
                 card.draggable = true; card.dataset.id = t.number;
                 card.addEventListener('dragstart', (e) => { state.draggedTaskId = t.number; e.dataTransfer.setData('text/plain', t.number); setTimeout(() => card.classList.add('opacity-50'), 0); });
                 card.addEventListener('dragend', () => { card.classList.remove('opacity-50'); state.draggedTaskId = null; });
@@ -869,19 +1106,24 @@
                 if(cols[t.status]) cols[t.status].appendChild(card);
             });
             document.getElementById('count-todo').textContent = counts['open']; document.getElementById('count-inprogress').textContent = counts['in-progress']; document.getElementById('count-done').textContent = counts['closed'];
+            if (q && visibleTasks.length === 0) {
+                cols['open'].innerHTML = '<div class="text-center text-slate-400 font-bold text-sm py-8">No tasks match "' + escapeHtml(q) + '"</div>';
+            }
         }
 
         function allowDrop(ev) { ev.preventDefault(); }
         async function drop(ev) {
             ev.preventDefault();
             if(!state.draggedTaskId) return;
+            if (!state.isOnline) return showToast("You're offline — can't update tasks right now.", 'warning');
             let dt = ev.target; while(dt && !dt.classList.contains('kanban-column')) dt = dt.parentElement;
             if(!dt) return;
             const ns = dt.getAttribute('data-state'), task = state.tasks.find(t => t.number == state.draggedTaskId);
             if (task && task.status !== ns) {
+                const prevStatus = task.status;
                 task.status = ns; renderKanban();
                 try { await updateTaskStatusApi(task.number, ns, task); showToast('Vibe updated ✨', 'success'); } 
-                catch (e) { showToast('Update failed.', 'error'); fetchTasks(); }
+                catch (e) { task.status = prevStatus; renderKanban(); showToast(e.message || 'Update failed.', 'error'); }
             }
         }
 
@@ -899,7 +1141,10 @@
 
         async function handleCreateTask(e) {
             e.preventDefault();
-            const payload = { title: document.getElementById('taskTitle').value, body: document.getElementById('taskBody').value };
+            if (!state.isOnline) return showToast("You're offline — connect to the internet to create a task.", 'warning');
+            const title = document.getElementById('taskTitle').value.trim();
+            if (!title) return showToast('Task title is required.', 'error');
+            const payload = { title, body: document.getElementById('taskBody').value };
             if(document.getElementById('taskDueDate').value) payload.body += `\n\n---\n*Due: ${document.getElementById('taskDueDate').value}*`;
             if(document.getElementById('taskAssignee').value) payload.assignees = [document.getElementById('taskAssignee').value];
 
@@ -914,19 +1159,20 @@
             const task = state.tasks.find(t => t.number == number); if (!task) return;
             document.getElementById('detailTaskNumber').textContent = `#${task.number}`; document.getElementById('detailTaskTitle').textContent = task.title;
             
-            let parsed = task.body ? marked.parse(task.body) : '<i class="text-slate-400">No details dropped.</i>';
-            appUsers.forEach(u => { parsed = parsed.replace(new RegExp(`@${u.username}`, 'gi'), `<span onclick="openProfileModal('${u.username}')" class="text-pink-600 font-extrabold bg-pink-100 px-2 py-0.5 rounded-lg cursor-pointer hover:bg-pink-200 inline-block -my-1">@${u.username}</span>`); });
+            let parsed = task.body ? sanitizeHtml(marked.parse(task.body)) : '<i class="text-slate-400">No details dropped.</i>';
+            appUsers.forEach(u => { parsed = parsed.replace(new RegExp(`@${u.username.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}`, 'gi'), `<span onclick="openProfileModal('${u.username}')" class="text-pink-600 font-extrabold bg-pink-100 px-2 py-0.5 rounded-lg cursor-pointer hover:bg-pink-200 inline-block -my-1">@${u.username}</span>`); });
             document.getElementById('detailTaskBody').innerHTML = parsed;
             
             document.getElementById('detailTaskGithubLink').href = task.html_url;
             document.getElementById('statusSelect').value = task.status;
-            document.getElementById('detailTaskAssignees').innerHTML = task.assignees.length ? task.assignees.map(a => `<div class="flex items-center gap-2 bg-white px-3 py-1.5 rounded-full border border-slate-200"><img src="${a.avatar_url}" class="w-6 h-6 rounded-full"><span class="text-sm font-bold text-slate-700">${a.login}</span></div>`).join('') : '<span class="text-sm text-slate-400 font-bold italic">No one assigned</span>';
+            document.getElementById('detailTaskAssignees').innerHTML = task.assignees.length ? task.assignees.map(a => `<div class="flex items-center gap-2 bg-white px-3 py-1.5 rounded-full border border-slate-200"><img src="${a.avatar_url}" class="w-6 h-6 rounded-full"><span class="text-sm font-bold text-slate-700">${escapeHtml(a.login)}</span></div>`).join('') : '<span class="text-sm text-slate-400 font-bold italic">No one assigned</span>';
             document.getElementById('detailTaskDateText').textContent = task.dueDate || 'Not set';
             document.getElementById('updateStatusBtn').setAttribute('data-task-number', task.number);
             toggleModal('taskDetailModal', true);
         }
 
         async function handleUpdateTaskStatus() {
+            if (!state.isOnline) return showToast("You're offline — can't update tasks right now.", 'warning');
             const btn = document.getElementById('updateStatusBtn'), num = btn.getAttribute('data-task-number'), ns = document.getElementById('statusSelect').value, task = state.tasks.find(t => t.number == num);
             if(!task || task.status === ns) return toggleModal('taskDetailModal', false);
             btn.innerHTML = 'Saving... ⏳'; btn.disabled = true;
@@ -953,23 +1199,38 @@
             }
         }
 
+        let _lastDocsFetch = [];
         async function fetchDocuments() {
-            const tb = document.getElementById('documentsTableBody'); tb.innerHTML = '<tr><td colspan="4" class="py-8 text-center text-slate-500 font-bold animate-pulse">Loading files...</td></tr>';
+            if (!state.isOnline) return renderDocumentsTable(safeJsonGet('tt_cache_docs_v3', []), true);
+            const tb = document.getElementById('documentsTableBody');
+            tb.innerHTML = Array.from({length: 3}).map(() => `<tr><td colspan="4" class="py-4 px-6"><div class="skeleton h-6 w-full"></div></td></tr>`).join('');
             try {
                 const contents = await githubApi('/contents'); if(!Array.isArray(contents)) throw new Error("Not a directory");
-                tb.innerHTML = ''; let hasDocs = false;
-                contents.forEach(i => {
-                    if(i.type === 'dir' || i.name.match(/\.(md|txt|csv|json|js|html|pdf|png|jpg)$/i)) {
-                        hasDocs = true;
-                        tb.innerHTML += `<tr class="hover:bg-white/50"><td class="py-4 px-6 border-b border-white/50 flex items-center gap-3"><span class="text-2xl">${i.type === 'dir'?'📁':'📄'}</span><span class="font-extrabold text-slate-800">${i.name}</span></td><td class="py-4 px-6 border-b border-white/50 text-sm font-bold text-slate-400">${i.path}</td><td class="py-4 px-6 border-b border-white/50 text-sm font-black text-slate-400 font-mono">${i.type === 'dir'?'-':formatBytes(i.size)}</td><td class="py-4 px-6 border-b border-white/50 text-right">${i.type === 'file' ? `<a href="${i.html_url}" target="_blank" class="px-3 py-1.5 bg-white border border-slate-200 text-slate-600 font-bold rounded-lg text-xs hover:bg-slate-50 mr-2 shadow-sm">View</a>` : ''}</td></tr>`;
-                    }
-                });
-                if(!hasDocs) tb.innerHTML = '<tr><td colspan="4" class="py-8 text-center text-slate-400 font-bold">No docs found.</td></tr>';
-                document.getElementById('dashDocsCount').textContent = contents.filter(i => i.type === 'file').length;
-            } catch (err) { tb.innerHTML = `<tr><td colspan="4" class="py-8 text-center text-red-400 font-bold">Error: ${err.message}</td></tr>`; }
+                safeSet('tt_cache_docs_v3', JSON.stringify(contents));
+                renderDocumentsTable(contents, false);
+            } catch (err) {
+                const cached = safeJsonGet('tt_cache_docs_v3', null);
+                if (cached) { renderDocumentsTable(cached, true); showToast('Using cached docs — ' + err.message, 'warning'); }
+                else tb.innerHTML = `<tr><td colspan="4" class="py-8 text-center text-red-400 font-bold">Error: ${escapeHtml(err.message)}</td></tr>`;
+            }
+        }
+
+        function renderDocumentsTable(contents, isCached) {
+            const tb = document.getElementById('documentsTableBody'); tb.innerHTML = '';
+            const q = (state.docSearch || '').toLowerCase().trim();
+            let hasDocs = false;
+            contents.filter(i => i.type === 'dir' || i.name.match(/\.(md|txt|csv|json|js|html|pdf|png|jpg)$/i))
+            .filter(i => !q || i.name.toLowerCase().includes(q))
+            .forEach(i => {
+                hasDocs = true;
+                tb.innerHTML += `<tr class="hover:bg-white/50 fade-in"><td class="py-4 px-6 border-b border-white/50 flex items-center gap-3"><span class="text-2xl">${i.type === 'dir'?'📁':'📄'}</span><span class="font-extrabold text-slate-800">${escapeHtml(i.name)}</span></td><td class="py-4 px-6 border-b border-white/50 text-sm font-bold text-slate-400">${escapeHtml(i.path)}</td><td class="py-4 px-6 border-b border-white/50 text-sm font-black text-slate-400 font-mono">${i.type === 'dir'?'-':formatBytes(i.size)}</td><td class="py-4 px-6 border-b border-white/50 text-right">${i.type === 'file' ? `<a href="${i.html_url}" target="_blank" rel="noopener noreferrer" class="px-3 py-1.5 bg-white border border-slate-200 text-slate-600 font-bold rounded-lg text-xs hover:bg-slate-50 mr-2 shadow-sm">View</a>` : ''}</td></tr>`;
+            });
+            if(!hasDocs) tb.innerHTML = `<tr><td colspan="4" class="py-8 text-center text-slate-400 font-bold">${q ? 'No docs match your search.' : 'No docs found.'}</td></tr>`;
+            document.getElementById('dashDocsCount').textContent = contents.filter(i => i.type === 'file').length;
         }
 
         async function handleUploadDoc() {
+            if (!state.isOnline) return showToast("You're offline — connect to the internet to upload.", 'warning');
             let name = document.getElementById('docFileName').value.trim(), path = document.getElementById('docFilePath').value.trim(), content = document.getElementById('docContent').value;
             if(!name || !content) return showToast('Name and content required', 'error');
             const btn = document.getElementById('submitDocBtn'); btn.innerHTML = 'Uploading...'; btn.disabled = true;
@@ -1024,36 +1285,36 @@
         
         function closeMobileSidebar() { 
             if(window.innerWidth < 768) { 
-                document.getElementById('sidebar').style.transform = 'translateX(-120%)'; 
+                document.getElementById('sidebar').classList.add('sidebar-closed'); 
                 document.getElementById('sidebarOverlay').classList.add('hidden'); 
             } 
         }
         
-        // Fully Repaired Toast Function
+        // Toast Function with icons per type
         function showToast(m, t = 'info') {
             const c = document.getElementById('toastContainer');
             if (!c) return; // Failsafe
+            const icons = { success: '✅', error: '🚫', info: 'ℹ️', warning: '⚠️' };
+            const colors = { success: 'bg-emerald-500', error: 'bg-pink-500', info: 'bg-violet-500', warning: 'bg-amber-500' };
             const el = document.createElement('div');
-            el.className = `toast-enter ${t==='success'?'bg-emerald-500':(t==='error'?'bg-pink-500':'bg-violet-500')} text-white px-5 py-4 rounded-2xl shadow-float font-bold border-2 border-white/20`;
-            el.innerHTML = `<span>${m}</span>`; 
+            el.setAttribute('role', 'status');
+            el.className = `toast-enter ${colors[t] || colors.info} text-white px-5 py-4 rounded-2xl shadow-float font-bold border-2 border-white/20 flex items-center gap-2.5 max-w-sm`;
+            el.innerHTML = `<span class="text-lg shrink-0">${icons[t] || icons.info}</span><span>${escapeHtml(m)}</span>`; 
             c.appendChild(el);
             setTimeout(() => { 
                 el.style.opacity = '0'; 
                 el.style.transform = 'translateY(10px)'; 
                 el.style.transition = 'all 0.3s ease';
                 setTimeout(() => el.remove(), 300); 
-            }, 3000);
+            }, 3500);
         }
         
-        function escapeHtml(u) { return (u || '').replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
+        function escapeHtml(u) { return (u || '').replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;"); }
         function formatBytes(b) { if(b===0) return '0 B'; const k = 1024, s = ['B', 'KB', 'MB', 'GB'], i = Math.floor(Math.log(b) / Math.log(k)); return parseFloat((b / Math.pow(k, i)).toFixed(2)) + ' ' + s[i]; }
         
         window.addEventListener('resize', () => { 
             if(window.innerWidth >= 768) { 
-                document.getElementById('sidebar').style.transform = 'translateX(0)'; 
                 document.getElementById('sidebarOverlay').classList.add('hidden'); 
-            } else {
-                document.getElementById('sidebar').style.transform = 'translateX(-120%)'; 
             }
         });
 
