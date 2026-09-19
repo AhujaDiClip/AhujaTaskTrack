@@ -74,12 +74,15 @@
                 <p class="mt-1"><span class="font-bold text-slate-600">Admin</span> | <span class="font-bold text-slate-600">Ansh Ahuja</span> | <span class="font-bold text-slate-600">Krish Kumar</span> | <span class="font-bold text-slate-600">Marketing</span></p>
                 <p class="mt-1">Password for all is: <code class="bg-slate-200 px-1 rounded text-slate-700">password123</code></p>
             </div>
+            <!-- Rescue button in case of broken data -->
+            <button onclick="factoryReset()" class="mt-4 text-[10px] text-slate-300 hover:text-red-500 uppercase tracking-widest font-black transition-colors">Emergency App Reset</button>
         </div>
     </div>
 
     <!-- MAIN APP CONTAINER -->
     <div id="mainApp" class="flex-1 flex h-full hidden w-full p-2 sm:p-4 gap-4">
         
+        <!-- SIDEBAR -->
         <aside class="w-64 glass-panel rounded-[2rem] flex flex-col h-full flex-shrink-0 transition-transform duration-300 md:translate-x-0 absolute md:relative z-40 shadow-float" id="sidebar" style="transform: translateX(-120%);">
             <div class="h-20 flex items-center px-6 justify-between pt-2">
                 <div class="flex items-center gap-3 font-extrabold text-2xl tracking-tight text-slate-800">
@@ -100,14 +103,12 @@
                 <a href="#" class="nav-link flex items-center gap-3 px-4 py-3.5 rounded-2xl hover:bg-slate-100 hover:text-slate-800 transition-all" data-view="calendar">
                     <span class="text-xl w-6 text-center">🗓️</span> Timeline
                 </a>
-                <!-- EXPLICIT USERS TAB -->
                 <a href="#" class="nav-link flex items-center gap-3 px-4 py-3.5 rounded-2xl hover:bg-slate-100 hover:text-slate-800 transition-all" data-view="employees">
                     <span class="text-xl w-6 text-center">👯‍♀️</span> The Squad (Users)
                 </a>
                 <a href="#" class="nav-link flex items-center gap-3 px-4 py-3.5 rounded-2xl hover:bg-slate-100 hover:text-slate-800 transition-all" data-view="documents">
                     <span class="text-xl w-6 text-center">📁</span> Docs
                 </a>
-                <!-- EXPLICIT SETTINGS TAB -->
                 <a href="#" class="nav-link flex items-center gap-3 px-4 py-3.5 rounded-2xl hover:bg-slate-100 hover:text-slate-800 transition-all mt-6" data-view="settings">
                     <span class="text-xl w-6 text-center">⚙️</span> Settings
                 </a>
@@ -264,7 +265,7 @@
                         <span class="text-3xl bg-white rounded-2xl p-2 shadow-sm border border-orange-100 rotate-[-5deg]">⚠️</span>
                         <div class="flex-1">
                             <h3 class="font-extrabold text-orange-900 text-lg">GitHub not connected!</h3>
-                            <p class="text-orange-800/80 font-medium text-sm mt-0.5">Tasks and Docs won't work until an Admin connects a repository.</p>
+                            <p class="text-orange-800/80 font-medium text-sm mt-0.5">Tasks and Docs won't work until an Admin connects a repository in Settings.</p>
                         </div>
                         <button onclick="switchView('settings')" class="hidden sm:block px-5 py-2.5 bg-white text-orange-700 font-bold rounded-xl border border-orange-200 hover:bg-orange-50 transition-colors shadow-sm">Go to Settings</button>
                     </div>
@@ -548,31 +549,45 @@
         ];
 
         let appUsers = [];
+        // Using 'tt_users_v3' to force a fresh slate and avoid previous corruption
         try {
-            const stored = localStorage.getItem('tt_users_v2'); // Using new key to bypass old corrupt data
+            const stored = localStorage.getItem('tt_users_v3');
             if (stored) {
                 appUsers = JSON.parse(stored);
                 if (!Array.isArray(appUsers) || appUsers.length === 0) throw new Error("Invalid stored data");
             } else {
-                appUsers = defaultUsers;
-                localStorage.setItem('tt_users_v2', JSON.stringify(appUsers));
+                throw new Error("No data found");
             }
         } catch (e) {
-            console.error("Local storage corrupted, resetting users...", e);
-            appUsers = defaultUsers;
-            localStorage.setItem('tt_users_v2', JSON.stringify(appUsers));
+            console.log("Initializing fresh database...");
+            appUsers = [...defaultUsers];
+            localStorage.setItem('tt_users_v3', JSON.stringify(appUsers));
         }
 
         const state = {
             currentUser: null,
-            ghAuth: { username: localStorage.getItem('tt_gh_username') || '', token: localStorage.getItem('tt_gh_token') || '', repo: localStorage.getItem('tt_gh_repo') || '' },
-            tasks: [], currentDate: new Date(), draggedTaskId: null
+            ghAuth: { 
+                username: localStorage.getItem('tt_gh_username_v3') || '', 
+                token: localStorage.getItem('tt_gh_token_v3') || '', 
+                repo: localStorage.getItem('tt_gh_repo_v3') || '' 
+            },
+            tasks: [], 
+            currentDate: new Date(), 
+            draggedTaskId: null
         };
 
         try {
-            const storedUser = localStorage.getItem('tt_currentUser_v2');
+            const storedUser = localStorage.getItem('tt_currentUser_v3');
             if (storedUser) state.currentUser = JSON.parse(storedUser);
         } catch (e) { console.error("Corrupted current user state."); }
+
+        // Factory Reset Utility
+        window.factoryReset = function() {
+            if(confirm("Are you sure? This will wipe all local data and reset the app.")) {
+                localStorage.clear();
+                location.reload();
+            }
+        }
 
         // --- 2. CORE FLOW & AUTH ---
         function init() {
@@ -590,9 +605,10 @@
             
             if (user) {
                 state.currentUser = user;
-                localStorage.setItem('tt_currentUser_v2', JSON.stringify(user));
+                localStorage.setItem('tt_currentUser_v3', JSON.stringify(user));
                 const btn = document.querySelector('#loginForm button');
                 btn.innerHTML = 'Vibe Check Passed ✅'; btn.classList.add('bg-emerald-500');
+                showToast('Welcome back, ' + user.username + '!', 'success');
                 
                 setTimeout(() => {
                     document.getElementById('loginScreen').classList.add('opacity-0');
@@ -606,7 +622,7 @@
         function handleLogout(e) {
             if(e) e.stopPropagation();
             state.currentUser = null;
-            localStorage.removeItem('tt_currentUser_v2');
+            localStorage.removeItem('tt_currentUser_v3');
             location.reload(); 
         }
 
@@ -648,7 +664,11 @@
             document.getElementById('myProfileForm').addEventListener('submit', handleSaveProfile);
             document.getElementById('addEmployeeForm').addEventListener('submit', handleAddUser);
             document.querySelectorAll('.nav-link').forEach(link => {
-                link.addEventListener('click', (e) => { e.preventDefault(); switchView(link.getAttribute('data-view')); closeMobileSidebar(); });
+                link.addEventListener('click', (e) => { 
+                    e.preventDefault(); 
+                    switchView(link.getAttribute('data-view')); 
+                    closeMobileSidebar(); 
+                });
             });
             document.getElementById('openSidebarBtn').addEventListener('click', () => { document.getElementById('sidebar').style.transform = 'translateX(0)'; document.getElementById('sidebarOverlay').classList.remove('hidden'); });
             document.getElementById('closeSidebarBtn').addEventListener('click', closeMobileSidebar);
@@ -684,8 +704,8 @@
             const userIndex = appUsers.findIndex(u => u.username === state.currentUser.username);
             if (userIndex !== -1) {
                 appUsers[userIndex].pronouns = pronouns; appUsers[userIndex].bio = bio;
-                localStorage.setItem('tt_users_v2', JSON.stringify(appUsers));
-                localStorage.setItem('tt_currentUser_v2', JSON.stringify(state.currentUser));
+                localStorage.setItem('tt_users_v3', JSON.stringify(appUsers));
+                localStorage.setItem('tt_currentUser_v3', JSON.stringify(state.currentUser));
             }
             showToast('Profile vibe updated! 🪪', 'success');
         }
@@ -701,7 +721,7 @@
                 username: name, password: document.getElementById('settingsEmpPass').value.trim(), role: document.getElementById('settingsEmpRole').value,
                 avatar: emojis[Math.floor(Math.random() * emojis.length)], bg: bgs[Math.floor(Math.random() * bgs.length)], pronouns: '', bio: ''
             });
-            localStorage.setItem('tt_users_v2', JSON.stringify(appUsers));
+            localStorage.setItem('tt_users_v3', JSON.stringify(appUsers));
             document.getElementById('addEmployeeForm').reset();
             renderEmployees(); showToast(`${name} added!`, 'success');
         }
@@ -751,7 +771,7 @@
         }
 
         window.removeUser = function(index) {
-            if(confirm('Kick this user?')) { appUsers.splice(index, 1); localStorage.setItem('tt_users_v2', JSON.stringify(appUsers)); renderEmployees(); }
+            if(confirm('Kick this user?')) { appUsers.splice(index, 1); localStorage.setItem('tt_users_v3', JSON.stringify(appUsers)); renderEmployees(); showToast('User removed.', 'info'); }
         };
 
         // --- 3. GITHUB API LOGIC ---
@@ -773,14 +793,14 @@
             fetch(`https://api.github.com/repos/${repo}`, { headers: { 'Authorization': `token ${token}`, 'Accept': 'application/vnd.github.v3+json' } })
             .then(res => { if (res.ok) return res.json(); throw new Error('Connection failed.'); })
             .then(() => {
-                localStorage.setItem('tt_gh_username', user); localStorage.setItem('tt_gh_token', token); localStorage.setItem('tt_gh_repo', repo);
+                localStorage.setItem('tt_gh_username_v3', user); localStorage.setItem('tt_gh_token_v3', token); localStorage.setItem('tt_gh_repo_v3', repo);
                 state.ghAuth = { username: user, token, repo }; showToast('Connected! ✨', 'success'); checkGitHubStatus();
             })
             .catch(err => showToast(err.message, 'error')).finally(() => { btn.innerHTML = 'Connect App'; btn.disabled = false; });
         }
 
         function disconnectGhAuth() {
-            localStorage.removeItem('tt_gh_username'); localStorage.removeItem('tt_gh_token'); localStorage.removeItem('tt_gh_repo');
+            localStorage.removeItem('tt_gh_username_v3'); localStorage.removeItem('tt_gh_token_v3'); localStorage.removeItem('tt_gh_repo_v3');
             state.ghAuth = { username: '', token: '', repo: '' }; checkGitHubStatus(); showToast('Disconnected', 'info');
         }
 
@@ -954,33 +974,81 @@
         // --- 4. UTILITIES ---
         function switchView(viewId) {
             document.querySelectorAll('.nav-link').forEach(l => {
-                if(l.getAttribute('data-view') === viewId) l.classList.add('bg-violet-100', 'text-violet-700');
-                else { l.classList.remove('bg-violet-100', 'text-violet-700'); l.classList.add('hover:bg-slate-100', 'hover:text-slate-800'); }
+                if(l.getAttribute('data-view') === viewId) {
+                    l.classList.add('bg-violet-100', 'text-violet-700');
+                    l.classList.remove('hover:bg-slate-100', 'hover:text-slate-800');
+                } else { 
+                    l.classList.remove('bg-violet-100', 'text-violet-700'); 
+                    l.classList.add('hover:bg-slate-100', 'hover:text-slate-800'); 
+                }
             });
             const titles = { dashboard: 'Home Base', tasks: 'The Board 📋', calendar: 'Timeline 🗓️', employees: 'The Squad (Users) 👯‍♀️', documents: 'Docs & Files 📁', settings: 'Settings ⚙️' };
             document.getElementById('headerTitle').textContent = titles[viewId] || 'TaskTrack';
             document.querySelectorAll('.view-section').forEach(v => v.classList.add('hidden'));
+            
             const t = document.getElementById(`${viewId}View`);
-            if (t) { t.classList.remove('hidden'); if(viewId === 'documents' && state.ghAuth.token) fetchDocuments(); if(viewId === 'calendar') renderCalendar(); }
+            if (t) { 
+                t.classList.remove('hidden'); 
+                if(viewId === 'documents' && state.ghAuth.token) fetchDocuments(); 
+                if(viewId === 'calendar') renderCalendar(); 
+            }
         }
 
         function toggleModal(id, show) {
-            const m = document.getElementById(id); if(!m) return; const c = m.querySelector('.modal-container');
-            if(show) { m.classList.remove('opacity-0', 'pointer-events-none'); setTimeout(() => c.classList.remove('scale-95'), 10); document.body.classList.add('modal-active'); } 
-            else { c.classList.add('scale-95'); setTimeout(() => m.classList.add('opacity-0', 'pointer-events-none'), 300); document.body.classList.remove('modal-active'); }
+            const m = document.getElementById(id); if(!m) return; 
+            const c = m.querySelector('.modal-container');
+            if(show) { 
+                m.classList.remove('opacity-0', 'pointer-events-none'); 
+                setTimeout(() => c.classList.remove('scale-95'), 10); 
+                document.body.classList.add('modal-active'); 
+            } else { 
+                c.classList.add('scale-95'); 
+                setTimeout(() => m.classList.add('opacity-0', 'pointer-events-none'), 300); 
+                document.body.classList.remove('modal-active'); 
+            }
         }
-        window.openModal = function(id) { if(id === 'newTaskModal') renderQuickTags(); toggleModal(id, true); }
-        function closeMobileSidebar() { if(window.innerWidth < 768) { document.getElementById('sidebar').style.transform = 'translateX(-120%)'; document.getElementById('sidebarOverlay').classList.add('hidden'); } }
+        
+        window.openModal = function(id) { 
+            if(id === 'newTaskModal') renderQuickTags(); 
+            toggleModal(id, true); 
+        }
+        
+        function closeMobileSidebar() { 
+            if(window.innerWidth < 768) { 
+                document.getElementById('sidebar').style.transform = 'translateX(-120%)'; 
+                document.getElementById('sidebarOverlay').classList.add('hidden'); 
+            } 
+        }
+        
+        // Fully Repaired Toast Function
         function showToast(m, t = 'info') {
-            const c = document.getElementById('toastContainer'), el = document.createElement('div');
-            el.className = `toast-enter ${t==='success'?'bg-emerald-500':(t==='error'?'bg-pink-500':'bg-violet-500')} text-white px-5 py-4 rounded-2xl shadow-float font-bold`;
-            el.innerHTML = `<span>${m}</span>`; c.appendChild(el);
-            setTimeout(() => { el.style.opacity = '0'; el.style.transform = 'translateY(10px)'; setTimeout(() => el.remove(), 300); }, 3000);
+            const c = document.getElementById('toastContainer');
+            if (!c) return; // Failsafe
+            const el = document.createElement('div');
+            el.className = `toast-enter ${t==='success'?'bg-emerald-500':(t==='error'?'bg-pink-500':'bg-violet-500')} text-white px-5 py-4 rounded-2xl shadow-float font-bold border-2 border-white/20`;
+            el.innerHTML = `<span>${m}</span>`; 
+            c.appendChild(el);
+            setTimeout(() => { 
+                el.style.opacity = '0'; 
+                el.style.transform = 'translateY(10px)'; 
+                el.style.transition = 'all 0.3s ease';
+                setTimeout(() => el.remove(), 300); 
+            }, 3000);
         }
+        
         function escapeHtml(u) { return (u || '').replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
         function formatBytes(b) { if(b===0) return '0 B'; const k = 1024, s = ['B', 'KB', 'MB', 'GB'], i = Math.floor(Math.log(b) / Math.log(k)); return parseFloat((b / Math.pow(k, i)).toFixed(2)) + ' ' + s[i]; }
-        window.addEventListener('resize', () => { if(window.innerWidth >= 768) { document.getElementById('sidebar').style.transform = 'translateX(0)'; document.getElementById('sidebarOverlay').classList.add('hidden'); } else document.getElementById('sidebar').style.transform = 'translateX(-120%)'; });
+        
+        window.addEventListener('resize', () => { 
+            if(window.innerWidth >= 768) { 
+                document.getElementById('sidebar').style.transform = 'translateX(0)'; 
+                document.getElementById('sidebarOverlay').classList.add('hidden'); 
+            } else {
+                document.getElementById('sidebar').style.transform = 'translateX(-120%)'; 
+            }
+        });
 
+        // Bootstrap App
         document.addEventListener('DOMContentLoaded', init);
     </script>
 </body>
