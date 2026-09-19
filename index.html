@@ -17,20 +17,9 @@
         tailwind.config = {
             theme: {
                 extend: {
-                    fontFamily: {
-                        sans: ['Plus Jakarta Sans', 'sans-serif'],
-                    },
-                    colors: {
-                        primary: '#8b5cf6', // Violet 500
-                        primaryHover: '#7c3aed', // Violet 600
-                        accent: '#ec4899', // Pink 500
-                        surface: 'rgba(255, 255, 255, 0.8)',
-                        background: '#fdfbf7', // Warm off-white
-                    },
-                    boxShadow: {
-                        'glass': '0 8px 32px 0 rgba(139, 92, 246, 0.1)',
-                        'float': '0 20px 40px -10px rgba(0, 0, 0, 0.08)',
-                    }
+                    fontFamily: { sans: ['Plus Jakarta Sans', 'sans-serif'] },
+                    colors: { primary: '#8b5cf6', accent: '#ec4899' },
+                    boxShadow: { 'glass': '0 8px 32px 0 rgba(139, 92, 246, 0.1)', 'float': '0 20px 40px -10px rgba(0, 0, 0, 0.08)' }
                 }
             }
         }
@@ -45,31 +34,17 @@
                               radial-gradient(at 0% 100%, hsla(202,74%,89%,1) 0, transparent 50%);
             background-attachment: fixed;
         }
-        .hide-scrollbar::-webkit-scrollbar { display: none; }
-        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-        
-        /* Custom bubbly scrollbar */
         .custom-scrollbar::-webkit-scrollbar { width: 8px; height: 8px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #d8b4fe; border-radius: 20px; }
         .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #c084fc; }
-
         .modal { transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1), transform 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
-        body.modal-active { overflow-x: hidden; overflow-y: hidden !important; }
-        
-        /* Gen Z Animations */
+        body.modal-active { overflow: hidden !important; }
         @keyframes popIn { 0% { transform: scale(0.95) translateY(10px); opacity: 0; } 100% { transform: scale(1) translateY(0); opacity: 1; } }
         @keyframes slideRight { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
         .toast-enter { animation: slideRight 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
         .view-section { animation: popIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-        
-        /* Glassmorphism utilities */
-        .glass-panel {
-            background: rgba(255, 255, 255, 0.65);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.8);
-        }
+        .glass-panel { background: rgba(255, 255, 255, 0.65); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.8); }
     </style>
 </head>
 <body class="text-gray-800 h-screen overflow-hidden flex selection:bg-fuchsia-200 selection:text-fuchsia-900">
@@ -77,9 +52,7 @@
     <!-- LOGIN SCREEN -->
     <div id="loginScreen" class="fixed inset-0 z-[100] flex items-center justify-center backdrop-blur-xl bg-white/30 transition-opacity duration-500">
         <div class="glass-panel p-10 rounded-[2.5rem] shadow-float w-11/12 max-w-md border-2 border-white text-center transform transition-transform duration-500 hover:scale-[1.02]">
-            <div class="w-20 h-20 bg-gradient-to-tr from-violet-500 to-fuchsia-500 rounded-3xl mx-auto flex items-center justify-center text-4xl text-white shadow-lg mb-6 rotate-3">
-                ✨
-            </div>
+            <div class="w-20 h-20 bg-gradient-to-tr from-violet-500 to-fuchsia-500 rounded-3xl mx-auto flex items-center justify-center text-4xl text-white shadow-lg mb-6 rotate-3">✨</div>
             <h1 class="text-3xl font-extrabold text-slate-800 tracking-tight mb-2">TaskTrack</h1>
             <p class="text-slate-500 font-medium mb-8">Log in to enter the workspace vibe.</p>
             
@@ -107,12 +80,10 @@
     <!-- MAIN APP CONTAINER -->
     <div id="mainApp" class="flex-1 flex h-full hidden w-full p-2 sm:p-4 gap-4">
         
-        <!-- Sidebar -->
         <aside class="w-64 glass-panel rounded-[2rem] flex flex-col h-full flex-shrink-0 transition-transform duration-300 md:translate-x-0 absolute md:relative z-40 shadow-float" id="sidebar" style="transform: translateX(-120%);">
             <div class="h-20 flex items-center px-6 justify-between pt-2">
                 <div class="flex items-center gap-3 font-extrabold text-2xl tracking-tight text-slate-800">
-                    <span class="text-3xl">✨</span>
-                    TaskTrack
+                    <span class="text-3xl">✨</span> TaskTrack
                 </div>
                 <button id="closeSidebarBtn" class="md:hidden text-slate-400 hover:text-slate-800 bg-slate-100 w-8 h-8 rounded-full flex items-center justify-center">
                     <i class="fa-solid fa-xmark"></i>
@@ -129,12 +100,14 @@
                 <a href="#" class="nav-link flex items-center gap-3 px-4 py-3.5 rounded-2xl hover:bg-slate-100 hover:text-slate-800 transition-all" data-view="calendar">
                     <span class="text-xl w-6 text-center">🗓️</span> Timeline
                 </a>
+                <!-- EXPLICIT USERS TAB -->
                 <a href="#" class="nav-link flex items-center gap-3 px-4 py-3.5 rounded-2xl hover:bg-slate-100 hover:text-slate-800 transition-all" data-view="employees">
                     <span class="text-xl w-6 text-center">👯‍♀️</span> The Squad (Users)
                 </a>
                 <a href="#" class="nav-link flex items-center gap-3 px-4 py-3.5 rounded-2xl hover:bg-slate-100 hover:text-slate-800 transition-all" data-view="documents">
                     <span class="text-xl w-6 text-center">📁</span> Docs
                 </a>
+                <!-- EXPLICIT SETTINGS TAB -->
                 <a href="#" class="nav-link flex items-center gap-3 px-4 py-3.5 rounded-2xl hover:bg-slate-100 hover:text-slate-800 transition-all mt-6" data-view="settings">
                     <span class="text-xl w-6 text-center">⚙️</span> Settings
                 </a>
@@ -143,9 +116,7 @@
             <div class="p-4 mt-auto mb-2">
                 <div class="glass-panel rounded-2xl p-3 flex items-center justify-between cursor-pointer hover:bg-white/80 transition-colors" onclick="switchView('settings')">
                     <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-fuchsia-400 to-violet-500 flex items-center justify-center font-bold text-lg text-white shadow-md border-2 border-white" id="sidebarAvatar">
-                            👤
-                        </div>
+                        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-fuchsia-400 to-violet-500 flex items-center justify-center font-bold text-lg text-white shadow-md border-2 border-white" id="sidebarAvatar">👤</div>
                         <div class="overflow-hidden">
                             <p class="text-sm font-extrabold text-slate-800 truncate" id="sidebarUsername">User</p>
                             <p class="text-xs text-violet-500 font-semibold" id="sidebarRole">Role</p>
@@ -157,13 +128,10 @@
                 </div>
             </div>
         </aside>
-
-        <!-- Overlay for mobile sidebar -->
         <div id="sidebarOverlay" class="fixed inset-0 bg-slate-900/20 backdrop-blur-sm z-30 hidden md:hidden rounded-[2rem]"></div>
 
-        <!-- Main Content Area -->
+        <!-- MAIN CONTENT AREA -->
         <main class="flex-1 flex flex-col h-full overflow-hidden relative glass-panel rounded-[2rem] shadow-float border-2 border-white/60">
-            <!-- Top Header -->
             <header class="h-20 flex items-center justify-between px-6 sm:px-8 z-10 sticky top-0">
                 <div class="flex items-center gap-4">
                     <button id="openSidebarBtn" class="md:hidden text-slate-500 hover:text-violet-600 bg-white p-2 rounded-xl shadow-sm border border-slate-100">
@@ -171,33 +139,16 @@
                     </button>
                     <h1 class="text-3xl font-extrabold text-slate-800 tracking-tight" id="headerTitle">Home Base</h1>
                 </div>
-                
-                <div class="flex items-center gap-3">
-                    <div class="hidden sm:flex items-center bg-white/60 backdrop-blur-md rounded-2xl px-4 py-2.5 border-2 border-white focus-within:border-violet-300 focus-within:shadow-md transition-all shadow-sm">
-                        <i class="fa-solid fa-search text-slate-400 mr-2"></i>
-                        <input type="text" placeholder="Search the vibe..." class="bg-transparent border-none outline-none text-sm w-48 text-slate-700 placeholder-slate-400 font-medium">
-                    </div>
-                    
-                    <button class="relative p-3 text-slate-500 hover:text-violet-600 transition-colors bg-white/60 backdrop-blur-md rounded-2xl shadow-sm border-2 border-white hover:shadow-md">
-                        <i class="fa-solid fa-bell text-lg"></i>
-                        <span class="absolute top-2 right-2 w-2.5 h-2.5 bg-pink-500 rounded-full border-2 border-white"></span>
-                    </button>
-                </div>
             </header>
 
-            <!-- Content Scrollable Area -->
             <div class="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 custom-scrollbar relative" id="mainContent">
                 
                 <!-- VIEW: Settings / Auth -->
                 <div id="settingsView" class="view-section hidden max-w-4xl mx-auto space-y-8 pb-12">
-                    
-                    <!-- My Profile (Everyone sees this) -->
                     <div class="glass-panel rounded-[2rem] shadow-sm border border-white overflow-hidden">
                         <div class="p-6 md:p-8 bg-white/40">
-                            <h2 class="text-2xl font-extrabold text-slate-800 flex items-center gap-3 mb-2">
-                                <span class="text-3xl">🪪</span> My Vibe Check
-                            </h2>
-                            <p class="text-slate-500 font-medium ml-11">Your personal details.</p>
+                            <h2 class="text-2xl font-extrabold text-slate-800 flex items-center gap-3 mb-2"><span class="text-3xl">🪪</span> My Vibe Check (Profile)</h2>
+                            <p class="text-slate-500 font-medium ml-11">Set up your bio and pronouns for the squad to see.</p>
                         </div>
                         <div class="p-6 md:p-8 space-y-4">
                             <div class="flex flex-col md:flex-row items-start md:items-center gap-6 bg-white p-6 rounded-3xl border border-slate-100 shadow-sm mb-6">
@@ -207,7 +158,6 @@
                                     <span id="myRole" class="inline-block mt-1 px-3 py-1 bg-violet-100 text-violet-700 rounded-full text-xs font-bold uppercase tracking-wider">Role</span>
                                 </div>
                             </div>
-
                             <form id="myProfileForm" class="bg-white/50 p-6 rounded-3xl border border-slate-100 space-y-5">
                                 <div>
                                     <label class="block text-sm font-bold text-slate-700 mb-1.5 ml-1">Pronouns</label>
@@ -226,16 +176,13 @@
                         </div>
                     </div>
 
-                    <!-- Admin Only: Company Settings -->
+                    <!-- Admin Settings Block -->
                     <div id="adminSettingsBlock" class="hidden space-y-8">
                         <div class="glass-panel rounded-[2rem] shadow-sm border border-white overflow-hidden">
                             <div class="p-6 md:p-8 bg-white/40 border-b border-white/50">
-                                <h2 class="text-2xl font-extrabold text-slate-800 flex items-center gap-3 mb-2">
-                                    <span class="text-3xl">🏢</span> Squad Management
-                                </h2>
+                                <h2 class="text-2xl font-extrabold text-slate-800 flex items-center gap-3 mb-2"><span class="text-3xl">🏢</span> Squad Management</h2>
                                 <p class="text-slate-500 font-medium ml-11">Add new homies to the workspace. (Admin/Manager only)</p>
                             </div>
-                            
                             <div class="p-6 md:p-8 bg-white/20">
                                 <div class="bg-white p-6 md:p-8 rounded-3xl border border-slate-100 shadow-sm">
                                     <h3 class="text-lg font-bold text-slate-800 mb-5 flex items-center gap-2">✨ Add New Colleague</h3>
@@ -266,31 +213,20 @@
                             </div>
                         </div>
 
-                        <!-- GitHub Integration Setup -->
+                        <!-- GitHub Setup -->
                         <div class="glass-panel rounded-[2rem] shadow-sm border border-white overflow-hidden border-2 border-pink-100">
                             <div class="p-6 md:p-8 bg-gradient-to-r from-pink-50 to-white border-b border-pink-100">
                                 <h2 class="text-2xl font-extrabold text-slate-800 flex items-center gap-3 mb-2">
-                                    <span class="text-3xl text-slate-900"><i class="fa-brands fa-github"></i></span>
-                                    GitHub Brain Setup
+                                    <span class="text-3xl text-slate-900"><i class="fa-brands fa-github"></i></span> GitHub Brain Setup
                                 </h2>
                                 <p class="text-slate-500 font-medium ml-11">Connect the workspace to a GitHub repo for Tasks and Docs.</p>
                             </div>
-                            
                             <div class="p-6 md:p-8 space-y-6">
-                                <div class="bg-blue-50/80 p-5 rounded-2xl text-sm flex gap-4 border border-blue-200 shadow-sm">
-                                    <span class="text-2xl">ℹ️</span>
-                                    <div>
-                                        <p class="font-extrabold text-blue-900 mb-1 text-base">We need a PAT (Personal Access Token)</p>
-                                        <p class="text-blue-800 font-medium leading-relaxed">To save kanban boards and documents, provide a Fine-grained token with <span class="font-bold bg-white px-2 py-0.5 rounded-lg text-blue-900 shadow-sm">Contents</span> and <span class="font-bold bg-white px-2 py-0.5 rounded-lg text-blue-900 shadow-sm">Issues</span> read/write access.</p>
-                                    </div>
-                                </div>
-
                                 <div class="space-y-5 bg-white p-6 md:p-8 rounded-3xl border border-slate-100 shadow-sm">
                                     <div>
                                         <label class="block text-sm font-bold text-slate-700 mb-1.5 ml-1">GitHub Username</label>
                                         <input type="text" id="ghUsername" placeholder="e.g. torvalds" class="w-full px-5 py-3.5 bg-slate-50 border-2 border-slate-100 rounded-2xl focus:border-pink-400 outline-none font-medium transition-colors">
                                     </div>
-                                    
                                     <div>
                                         <label class="block text-sm font-bold text-slate-700 mb-1.5 ml-1">Token (PAT)</label>
                                         <div class="relative">
@@ -300,14 +236,12 @@
                                             </button>
                                         </div>
                                     </div>
-                                    
                                     <div>
                                         <label class="block text-sm font-bold text-slate-700 mb-1.5 ml-1">Target Repository</label>
                                         <input type="text" id="ghRepo" placeholder="username/repo-name" class="w-full px-5 py-3.5 bg-slate-50 border-2 border-slate-100 rounded-2xl focus:border-pink-400 outline-none font-mono text-sm transition-colors">
                                         <p class="text-xs text-slate-400 font-medium mt-2 ml-1">Format: username/repo (No URLs!)</p>
                                     </div>
                                 </div>
-
                                 <div class="pt-2 flex justify-end gap-3">
                                     <button id="disconnectGhBtn" class="hidden px-6 py-3.5 bg-white border-2 border-red-100 text-red-500 rounded-2xl hover:bg-red-50 hover:border-red-200 font-bold transition-all">Disconnect</button>
                                     <button id="saveGhSettingsBtn" class="bg-pink-500 hover:bg-pink-600 text-white px-8 py-3.5 rounded-2xl font-bold shadow-lg shadow-pink-500/30 transition-all hover:-translate-y-1 active:scale-95 flex items-center gap-2">
@@ -322,91 +256,53 @@
                         <span class="text-4xl block mb-3">🔒</span>
                         Company Settings and GitHub configurations are locked. <br> Ask an Admin or Manager to make changes.
                     </div>
-
                 </div>
 
                 <!-- VIEW: Dashboard -->
                 <div id="dashboardView" class="view-section hidden space-y-6 sm:space-y-8">
-                    
-                    <!-- GitHub Warning Banner -->
                     <div id="ghWarningBanner" class="hidden bg-gradient-to-r from-orange-100 to-amber-50 border-2 border-orange-200 p-4 sm:p-5 rounded-3xl flex items-start sm:items-center gap-4 shadow-sm">
                         <span class="text-3xl bg-white rounded-2xl p-2 shadow-sm border border-orange-100 rotate-[-5deg]">⚠️</span>
                         <div class="flex-1">
                             <h3 class="font-extrabold text-orange-900 text-lg">GitHub not connected!</h3>
                             <p class="text-orange-800/80 font-medium text-sm mt-0.5">Tasks and Docs won't work until an Admin connects a repository.</p>
                         </div>
-                        <button onclick="switchView('settings')" class="hidden sm:block px-5 py-2.5 bg-white text-orange-700 font-bold rounded-xl border border-orange-200 hover:bg-orange-50 transition-colors shadow-sm">Go to Config</button>
+                        <button onclick="switchView('settings')" class="hidden sm:block px-5 py-2.5 bg-white text-orange-700 font-bold rounded-xl border border-orange-200 hover:bg-orange-50 transition-colors shadow-sm">Go to Settings</button>
                     </div>
-
-                    <!-- Stats Row -->
                     <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
                         <div class="bg-white p-6 rounded-[2rem] shadow-sm border border-slate-100 flex flex-col justify-between relative overflow-hidden group hover:shadow-glass transition-all hover:-translate-y-1">
-                            <div class="absolute -right-4 -top-4 w-24 h-24 bg-violet-100 rounded-full opacity-50 group-hover:scale-150 transition-transform duration-500"></div>
                             <div class="w-12 h-12 rounded-2xl bg-violet-100 text-violet-600 flex items-center justify-center text-xl mb-4 z-10 border border-violet-200">📋</div>
-                            <div class="z-10">
-                                <p class="text-4xl font-black text-slate-800 tracking-tight" id="dashTotalTasks">-</p>
-                                <p class="text-sm text-slate-500 font-bold mt-1">Tasks on deck</p>
-                            </div>
+                            <div class="z-10"><p class="text-4xl font-black text-slate-800" id="dashTotalTasks">-</p><p class="text-sm text-slate-500 font-bold mt-1">Tasks on deck</p></div>
                         </div>
-                        
                         <div class="bg-white p-6 rounded-[2rem] shadow-sm border border-slate-100 flex flex-col justify-between relative overflow-hidden group hover:shadow-glass transition-all hover:-translate-y-1">
-                            <div class="absolute -right-4 -top-4 w-24 h-24 bg-emerald-100 rounded-full opacity-50 group-hover:scale-150 transition-transform duration-500"></div>
                             <div class="w-12 h-12 rounded-2xl bg-emerald-100 text-emerald-600 flex items-center justify-center text-xl mb-4 z-10 border border-emerald-200">✨</div>
-                            <div class="z-10">
-                                <p class="text-4xl font-black text-slate-800 tracking-tight" id="dashCompletedTasks">-</p>
-                                <p class="text-sm text-slate-500 font-bold mt-1">Nailed it</p>
-                            </div>
+                            <div class="z-10"><p class="text-4xl font-black text-slate-800" id="dashCompletedTasks">-</p><p class="text-sm text-slate-500 font-bold mt-1">Nailed it</p></div>
                         </div>
-                        
                         <div class="bg-white p-6 rounded-[2rem] shadow-sm border border-slate-100 flex flex-col justify-between relative overflow-hidden group hover:shadow-glass transition-all hover:-translate-y-1">
-                            <div class="absolute -right-4 -top-4 w-24 h-24 bg-pink-100 rounded-full opacity-50 group-hover:scale-150 transition-transform duration-500"></div>
                             <div class="w-12 h-12 rounded-2xl bg-pink-100 text-pink-600 flex items-center justify-center text-xl mb-4 z-10 border border-pink-200">👯‍♀️</div>
-                            <div class="z-10">
-                                <p class="text-4xl font-black text-slate-800 tracking-tight" id="dashEmployeesCount">-</p>
-                                <p class="text-sm text-slate-500 font-bold mt-1">Squad size</p>
-                            </div>
+                            <div class="z-10"><p class="text-4xl font-black text-slate-800" id="dashEmployeesCount">-</p><p class="text-sm text-slate-500 font-bold mt-1">Squad size</p></div>
                         </div>
-                        
                         <div class="bg-white p-6 rounded-[2rem] shadow-sm border border-slate-100 flex flex-col justify-between relative overflow-hidden group hover:shadow-glass transition-all hover:-translate-y-1">
-                            <div class="absolute -right-4 -top-4 w-24 h-24 bg-blue-100 rounded-full opacity-50 group-hover:scale-150 transition-transform duration-500"></div>
                             <div class="w-12 h-12 rounded-2xl bg-blue-100 text-blue-600 flex items-center justify-center text-xl mb-4 z-10 border border-blue-200">📁</div>
-                            <div class="z-10">
-                                <p class="text-4xl font-black text-slate-800 tracking-tight" id="dashDocsCount">-</p>
-                                <p class="text-sm text-slate-500 font-bold mt-1">Files dropped</p>
-                            </div>
+                            <div class="z-10"><p class="text-4xl font-black text-slate-800" id="dashDocsCount">-</p><p class="text-sm text-slate-500 font-bold mt-1">Files dropped</p></div>
                         </div>
                     </div>
-
-                    <!-- Main Dashboard Content -->
                     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8">
-                        <!-- Recent Tasks -->
                         <div class="lg:col-span-2 glass-panel rounded-[2rem] shadow-sm border border-white overflow-hidden flex flex-col h-[450px]">
                             <div class="p-6 border-b border-white/50 flex justify-between items-center bg-white/40 backdrop-blur-sm">
                                 <h3 class="text-xl font-extrabold text-slate-800">Recent Activity ⚡</h3>
                                 <button class="text-violet-600 text-sm font-bold hover:bg-violet-100 px-4 py-2 rounded-xl transition-colors flex items-center gap-1 bg-white shadow-sm border border-violet-100" onclick="switchView('tasks')">See All <i class="fa-solid fa-arrow-right text-xs"></i></button>
                             </div>
-                            <div class="p-2 overflow-y-auto custom-scrollbar flex-1" id="dashRecentTasks">
-                                <div class="p-10 text-center text-slate-400 font-medium">
-                                    <span class="text-4xl block mb-3 animate-pulse">⏳</span>
-                                    Waiting for GitHub connection...
-                                </div>
-                            </div>
+                            <div class="p-2 overflow-y-auto custom-scrollbar flex-1" id="dashRecentTasks"></div>
                         </div>
-
-                        <!-- Activity / Quick Actions -->
                         <div class="space-y-6 sm:space-y-8">
                             <div class="glass-panel rounded-[2rem] shadow-sm border border-white overflow-hidden">
-                                <div class="p-6 border-b border-white/50 bg-white/40">
-                                    <h3 class="text-xl font-extrabold text-slate-800">Fast Actions 🚀</h3>
-                                </div>
+                                <div class="p-6 border-b border-white/50 bg-white/40"><h3 class="text-xl font-extrabold text-slate-800">Fast Actions 🚀</h3></div>
                                 <div class="p-5 space-y-3">
                                     <button onclick="openModal('newTaskModal')" class="w-full flex items-center gap-4 p-4 rounded-2xl bg-white border border-slate-100 hover:border-violet-300 hover:shadow-md transition-all text-left text-slate-700 font-bold group">
-                                        <div class="w-12 h-12 rounded-xl bg-violet-50 text-violet-600 group-hover:bg-violet-500 group-hover:text-white transition-colors flex items-center justify-center text-xl shadow-sm border border-violet-100 group-hover:border-violet-500 rotate-[-3deg] group-hover:rotate-0">➕</div>
-                                        Drop a Task
+                                        <div class="w-12 h-12 rounded-xl bg-violet-50 text-violet-600 group-hover:bg-violet-500 group-hover:text-white transition-colors flex items-center justify-center text-xl shadow-sm border border-violet-100 group-hover:border-violet-500">➕</div> Drop a Task
                                     </button>
                                     <button onclick="switchView('documents')" class="w-full flex items-center gap-4 p-4 rounded-2xl bg-white border border-slate-100 hover:border-blue-300 hover:shadow-md transition-all text-left text-slate-700 font-bold group">
-                                        <div class="w-12 h-12 rounded-xl bg-blue-50 text-blue-600 group-hover:bg-blue-500 group-hover:text-white transition-colors flex items-center justify-center text-xl shadow-sm border border-blue-100 group-hover:border-blue-500 rotate-[3deg] group-hover:rotate-0">☁️</div>
-                                        Upload File
+                                        <div class="w-12 h-12 rounded-xl bg-blue-50 text-blue-600 group-hover:bg-blue-500 group-hover:text-white transition-colors flex items-center justify-center text-xl shadow-sm border border-blue-100 group-hover:border-blue-500">☁️</div> Upload File
                                     </button>
                                 </div>
                             </div>
@@ -425,45 +321,27 @@
                             <i class="fa-solid fa-plus"></i> New Task
                         </button>
                     </div>
-
                     <div class="flex-1 flex gap-6 overflow-x-auto custom-scrollbar pb-4 -mx-4 px-4 sm:mx-0 sm:px-0">
-                        <!-- Todo Column -->
                         <div class="glass-panel rounded-[2rem] w-80 flex-shrink-0 flex flex-col max-h-full border border-white shadow-sm overflow-hidden">
                             <div class="p-5 border-b border-white/50 flex justify-between items-center bg-white/40">
-                                <h3 class="font-extrabold text-slate-800 flex items-center gap-2 text-lg">
-                                    <span class="w-3 h-3 rounded-full bg-slate-300 border border-slate-400"></span> To Do
-                                </h3>
+                                <h3 class="font-extrabold text-slate-800 flex items-center gap-2 text-lg"><span class="w-3 h-3 rounded-full bg-slate-300 border border-slate-400"></span> To Do</h3>
                                 <span class="bg-white border border-slate-100 text-slate-600 text-xs px-2.5 py-1 rounded-full font-bold shadow-sm" id="count-todo">0</span>
                             </div>
-                            <div class="p-4 flex-1 overflow-y-auto custom-scrollbar space-y-3 kanban-column" id="col-todo" data-state="open" ondrop="drop(event)" ondragover="allowDrop(event)">
-                                <!-- Task Cards generated via JS -->
-                            </div>
+                            <div class="p-4 flex-1 overflow-y-auto custom-scrollbar space-y-3 kanban-column" id="col-todo" data-state="open" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
                         </div>
-
-                        <!-- In Progress Column -->
                         <div class="glass-panel rounded-[2rem] w-80 flex-shrink-0 flex flex-col max-h-full border border-white shadow-sm overflow-hidden">
                             <div class="p-5 border-b border-white/50 flex justify-between items-center bg-white/40">
-                                <h3 class="font-extrabold text-slate-800 flex items-center gap-2 text-lg">
-                                    <span class="w-3 h-3 rounded-full bg-amber-400 border border-amber-500 animate-pulse"></span> Doing
-                                </h3>
+                                <h3 class="font-extrabold text-slate-800 flex items-center gap-2 text-lg"><span class="w-3 h-3 rounded-full bg-amber-400 border border-amber-500 animate-pulse"></span> Doing</h3>
                                 <span class="bg-white border border-slate-100 text-slate-600 text-xs px-2.5 py-1 rounded-full font-bold shadow-sm" id="count-inprogress">0</span>
                             </div>
-                            <div class="p-4 flex-1 overflow-y-auto custom-scrollbar space-y-3 kanban-column" id="col-inprogress" data-state="in-progress" ondrop="drop(event)" ondragover="allowDrop(event)">
-                                <!-- Task Cards generated via JS -->
-                            </div>
+                            <div class="p-4 flex-1 overflow-y-auto custom-scrollbar space-y-3 kanban-column" id="col-inprogress" data-state="in-progress" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
                         </div>
-
-                        <!-- Done Column -->
                         <div class="glass-panel rounded-[2rem] w-80 flex-shrink-0 flex flex-col max-h-full border border-white shadow-sm overflow-hidden">
                             <div class="p-5 border-b border-white/50 flex justify-between items-center bg-white/40">
-                                <h3 class="font-extrabold text-slate-800 flex items-center gap-2 text-lg">
-                                    <span class="w-3 h-3 rounded-full bg-emerald-400 border border-emerald-500"></span> Done
-                                </h3>
+                                <h3 class="font-extrabold text-slate-800 flex items-center gap-2 text-lg"><span class="w-3 h-3 rounded-full bg-emerald-400 border border-emerald-500"></span> Done</h3>
                                 <span class="bg-white border border-slate-100 text-slate-600 text-xs px-2.5 py-1 rounded-full font-bold shadow-sm" id="count-done">0</span>
                             </div>
-                            <div class="p-4 flex-1 overflow-y-auto custom-scrollbar space-y-3 kanban-column" id="col-done" data-state="closed" ondrop="drop(event)" ondragover="allowDrop(event)">
-                                <!-- Task Cards generated via JS -->
-                            </div>
+                            <div class="p-4 flex-1 overflow-y-auto custom-scrollbar space-y-3 kanban-column" id="col-done" data-state="closed" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
                         </div>
                     </div>
                 </div>
@@ -473,92 +351,53 @@
                     <div class="flex justify-between items-center mb-6">
                         <div>
                             <h2 class="text-3xl font-extrabold text-slate-800 tracking-tight">Timeline 🗓️</h2>
-                            <p class="text-slate-500 font-medium mt-1">When stuff is happening.</p>
                         </div>
                         <div class="flex items-center gap-4">
                             <div class="flex bg-white shadow-sm border border-slate-100 rounded-2xl overflow-hidden p-1">
                                 <button id="prevMonthBtn" class="px-4 py-2 hover:bg-slate-50 rounded-xl font-bold text-slate-600 transition-colors"><i class="fa-solid fa-chevron-left"></i></button>
-                                <div class="px-4 py-2 font-extrabold text-sm w-40 text-center text-slate-800" id="currentMonthLabel">Month Year</div>
+                                <div class="px-4 py-2 font-extrabold text-sm w-40 text-center text-slate-800" id="currentMonthLabel">Month</div>
                                 <button id="nextMonthBtn" class="px-4 py-2 hover:bg-slate-50 rounded-xl font-bold text-slate-600 transition-colors"><i class="fa-solid fa-chevron-right"></i></button>
                             </div>
-                            <button onclick="renderCalendar()" class="bg-white shadow-sm border border-slate-100 text-slate-700 font-bold px-5 py-3 rounded-2xl hover:bg-slate-50 transition-colors">Today</button>
                         </div>
                     </div>
-
                     <div class="glass-panel rounded-[2.5rem] shadow-sm border border-white flex-1 flex flex-col overflow-hidden">
                         <div class="grid grid-cols-7 border-b border-white/50 bg-white/40">
-                            <div class="py-4 text-center text-xs font-black uppercase tracking-widest text-slate-400">Sun</div>
-                            <div class="py-4 text-center text-xs font-black uppercase tracking-widest text-slate-400">Mon</div>
-                            <div class="py-4 text-center text-xs font-black uppercase tracking-widest text-slate-400">Tue</div>
-                            <div class="py-4 text-center text-xs font-black uppercase tracking-widest text-slate-400">Wed</div>
-                            <div class="py-4 text-center text-xs font-black uppercase tracking-widest text-slate-400">Thu</div>
-                            <div class="py-4 text-center text-xs font-black uppercase tracking-widest text-slate-400">Fri</div>
-                            <div class="py-4 text-center text-xs font-black uppercase tracking-widest text-slate-400">Sat</div>
+                            <div class="py-4 text-center text-xs font-black uppercase tracking-widest text-slate-400">Sun</div><div class="py-4 text-center text-xs font-black uppercase tracking-widest text-slate-400">Mon</div><div class="py-4 text-center text-xs font-black uppercase tracking-widest text-slate-400">Tue</div><div class="py-4 text-center text-xs font-black uppercase tracking-widest text-slate-400">Wed</div><div class="py-4 text-center text-xs font-black uppercase tracking-widest text-slate-400">Thu</div><div class="py-4 text-center text-xs font-black uppercase tracking-widest text-slate-400">Fri</div><div class="py-4 text-center text-xs font-black uppercase tracking-widest text-slate-400">Sat</div>
                         </div>
-                        <div id="calendarGrid" class="flex-1 grid grid-cols-7 auto-rows-fr gap-px bg-white/20 backdrop-blur-md">
-                            <!-- Days generated via JS -->
-                        </div>
+                        <div id="calendarGrid" class="flex-1 grid grid-cols-7 auto-rows-fr gap-px bg-white/20 backdrop-blur-md"></div>
                     </div>
                 </div>
 
-                <!-- VIEW: Employees -->
+                <!-- VIEW: Employees (The Squad) -->
                 <div id="employeesView" class="view-section hidden">
                     <div class="flex justify-between items-center mb-8 glass-panel p-6 rounded-[2rem] shadow-sm border border-white">
                         <div>
-                            <h2 class="text-3xl font-extrabold text-slate-800 tracking-tight">The Squad 👯‍♀️</h2>
+                            <h2 class="text-3xl font-extrabold text-slate-800 tracking-tight">The Squad (Users) 👯‍♀️</h2>
                             <p class="text-slate-500 font-medium mt-1">Everyone in the workspace. Green dot = Online.</p>
                         </div>
                         <button onclick="switchView('settings')" class="bg-slate-900 hover:bg-slate-800 text-white px-6 py-3 rounded-2xl font-bold shadow-lg shadow-slate-900/20 transition-all hover:-translate-y-1 active:scale-95 flex items-center gap-2">
                             <i class="fa-solid fa-user-plus"></i> Add User
                         </button>
                     </div>
-
-                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6" id="employeesList">
-                        <!-- Employees generated via JS -->
-                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6" id="employeesList"></div>
                 </div>
 
                 <!-- VIEW: Documents -->
                 <div id="documentsView" class="view-section hidden">
                     <div class="flex justify-between items-center mb-6">
-                        <div>
-                            <h2 class="text-3xl font-extrabold text-slate-800 tracking-tight">Docs & Files 📁</h2>
-                            <p class="text-slate-500 font-medium mt-1">Saved directly to the GitHub repo.</p>
-                        </div>
+                        <div><h2 class="text-3xl font-extrabold text-slate-800 tracking-tight">Docs & Files 📁</h2></div>
                         <div class="flex gap-3">
-                            <button onclick="fetchDocuments()" class="px-4 py-3 bg-white shadow-sm border border-slate-100 rounded-2xl text-slate-600 hover:bg-slate-50 font-bold transition-colors">
-                                <i class="fa-solid fa-rotate-right"></i>
-                            </button>
-                            <button onclick="openModal('uploadDocModal')" class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-2xl font-bold shadow-lg shadow-blue-500/30 transition-all hover:-translate-y-1 active:scale-95 flex items-center gap-2">
-                                <i class="fa-solid fa-cloud-arrow-up"></i> Upload File
-                            </button>
+                            <button onclick="fetchDocuments()" class="px-4 py-3 bg-white shadow-sm border border-slate-100 rounded-2xl text-slate-600 hover:bg-slate-50 font-bold"><i class="fa-solid fa-rotate-right"></i></button>
+                            <button onclick="openModal('uploadDocModal')" class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-2xl font-bold shadow-lg shadow-blue-500/30 flex items-center gap-2"><i class="fa-solid fa-cloud-arrow-up"></i> Upload</button>
                         </div>
                     </div>
-
                     <div class="glass-panel rounded-[2rem] shadow-sm border border-white overflow-hidden">
-                        <div class="overflow-x-auto p-2">
-                            <table class="w-full text-left border-collapse">
-                                <thead>
-                                    <tr class="bg-white/40 border-b border-white/50">
-                                        <th class="py-4 px-6 text-xs font-black uppercase tracking-widest text-slate-400 rounded-tl-xl">File Name</th>
-                                        <th class="py-4 px-6 text-xs font-black uppercase tracking-widest text-slate-400">Path</th>
-                                        <th class="py-4 px-6 text-xs font-black uppercase tracking-widest text-slate-400">Size</th>
-                                        <th class="py-4 px-6 text-xs font-black uppercase tracking-widest text-slate-400 text-right rounded-tr-xl">Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="documentsTableBody" class="divide-y divide-white/40 bg-white/20 backdrop-blur-sm">
-                                    <!-- Docs generated via JS -->
-                                    <tr>
-                                        <td colspan="4" class="py-12 text-center text-slate-500 font-bold">
-                                            Awaiting GitHub Connection...
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
+                        <table class="w-full text-left border-collapse">
+                            <thead><tr class="bg-white/40 border-b border-white/50"><th class="py-4 px-6 text-xs font-black uppercase text-slate-400">File Name</th><th class="py-4 px-6 text-xs font-black uppercase text-slate-400">Path</th><th class="py-4 px-6 text-xs font-black uppercase text-slate-400">Size</th><th class="py-4 px-6 text-xs font-black uppercase text-slate-400 text-right">Actions</th></tr></thead>
+                            <tbody id="documentsTableBody" class="divide-y divide-white/40 bg-white/20 backdrop-blur-sm"></tbody>
+                        </table>
                     </div>
                 </div>
-
             </div>
         </main>
     </div>
@@ -572,80 +411,58 @@
             <div class="py-6 px-8">
                 <div class="flex justify-between items-center pb-4 border-b border-slate-100 mb-6">
                     <p class="text-2xl font-extrabold text-slate-800">Drop a New Task 🎯</p>
-                    <button class="modal-close w-10 h-10 bg-slate-100 rounded-full flex items-center justify-center text-slate-500 hover:text-slate-800 hover:bg-slate-200 transition-colors">
-                        <i class="fa-solid fa-xmark"></i>
-                    </button>
+                    <button class="modal-close w-10 h-10 bg-slate-100 rounded-full flex items-center justify-center text-slate-500 hover:text-slate-800"><i class="fa-solid fa-xmark"></i></button>
                 </div>
-
                 <form id="newTaskForm" class="space-y-5">
                     <div>
                         <label class="block text-sm font-bold text-slate-700 mb-1.5 ml-1">Task Title <span class="text-pink-500">*</span></label>
-                        <input type="text" id="taskTitle" required placeholder="What needs to be done?" class="w-full px-5 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-0 focus:border-violet-500 outline-none transition-all font-medium text-slate-800">
+                        <input type="text" id="taskTitle" required placeholder="What needs to be done?" class="w-full px-5 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl outline-none text-slate-800">
                     </div>
-                    
                     <div>
-                        <label class="block text-sm font-bold text-slate-700 mb-1.5 ml-1">Details (Markdown vibes OK)</label>
-                        <div class="bg-slate-50 border border-slate-200 rounded-2xl focus-within:border-violet-500 transition-all shadow-sm overflow-hidden p-2">
-                            <div class="mb-2 px-2">
-                                <span class="text-xs font-black text-slate-400 uppercase tracking-widest">Tag the Squad:</span>
-                                <div id="quickTagContainer" class="flex gap-2 mt-1.5 overflow-x-auto custom-scrollbar pb-1">
-                                    <!-- Populated via JS -->
-                                </div>
-                            </div>
-                            <textarea id="taskBody" rows="4" placeholder="Add the tea here... Use @ to mention someone!" class="w-full px-3 py-2 bg-transparent border-none outline-none font-medium text-slate-800 custom-scrollbar"></textarea>
+                        <label class="block text-sm font-bold text-slate-700 mb-1.5 ml-1">Details & Tags</label>
+                        <div class="bg-slate-50 border border-slate-200 rounded-2xl shadow-sm overflow-hidden p-2">
+                            <div class="mb-2 px-2"><span class="text-xs font-black text-slate-400 uppercase">Tag the Squad:</span><div id="quickTagContainer" class="flex gap-2 mt-1.5 overflow-x-auto custom-scrollbar pb-1"></div></div>
+                            <textarea id="taskBody" rows="4" placeholder="Add details... Use buttons above to mention people!" class="w-full px-3 py-2 bg-transparent border-none outline-none font-medium text-slate-800 custom-scrollbar"></textarea>
                         </div>
                     </div>
-
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                         <div>
                             <label class="block text-sm font-bold text-slate-700 mb-1.5 ml-1">Assignee (GitHub Username)</label>
-                            <input type="text" id="taskAssignee" placeholder="Leave empty for unassigned" class="w-full px-5 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-0 focus:border-violet-500 outline-none transition-all font-medium text-slate-800">
+                            <input type="text" id="taskAssignee" placeholder="Optional" class="w-full px-5 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl outline-none text-slate-800">
                         </div>
                         <div>
                             <label class="block text-sm font-bold text-slate-700 mb-1.5 ml-1">Deadline</label>
-                            <input type="date" id="taskDueDate" class="w-full px-5 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-0 focus:border-violet-500 outline-none transition-all font-medium text-slate-800">
+                            <input type="date" id="taskDueDate" class="w-full px-5 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl outline-none text-slate-800">
                         </div>
                     </div>
-
                     <div class="pt-6 flex justify-end gap-3 border-t border-slate-100 mt-8">
-                        <button type="button" class="modal-close px-6 py-3.5 bg-white border-2 border-slate-100 text-slate-600 font-bold rounded-2xl hover:bg-slate-50 transition-colors">Cancel</button>
-                        <button type="submit" class="px-8 py-3.5 bg-violet-500 text-white font-bold rounded-2xl hover:bg-violet-600 transition-all shadow-lg shadow-violet-500/30 active:scale-95" id="submitTaskBtn">
-                            Create Task ✨
-                        </button>
+                        <button type="button" class="modal-close px-6 py-3.5 bg-white border-2 border-slate-100 text-slate-600 font-bold rounded-2xl">Cancel</button>
+                        <button type="submit" class="px-8 py-3.5 bg-violet-500 text-white font-bold rounded-2xl shadow-lg" id="submitTaskBtn">Create Task ✨</button>
                     </div>
                 </form>
             </div>
         </div>
     </div>
 
-    <!-- User Profile Modal (View Colleague) -->
+    <!-- User Profile Modal -->
     <div id="profileModal" class="modal fixed inset-0 flex items-center justify-center opacity-0 pointer-events-none z-[60]">
         <div class="modal-overlay absolute inset-0 bg-slate-900/30 backdrop-blur-sm"></div>
         <div class="modal-container bg-white w-11/12 md:max-w-md mx-auto rounded-[2.5rem] shadow-float z-50 transform scale-95 transition-transform duration-300 overflow-hidden">
             <div class="h-32 bg-gradient-to-tr from-slate-200 to-slate-300 relative" id="profileModalBg">
-                <button class="modal-close absolute top-4 right-4 w-10 h-10 bg-white/30 backdrop-blur-md rounded-full flex items-center justify-center text-white hover:bg-white hover:text-slate-800 transition-colors border border-white/50">
-                    <i class="fa-solid fa-xmark"></i>
-                </button>
+                <button class="modal-close absolute top-4 right-4 w-10 h-10 bg-white/30 backdrop-blur-md rounded-full flex items-center justify-center text-white border border-white/50"><i class="fa-solid fa-xmark"></i></button>
             </div>
-            
             <div class="px-8 pb-8 pt-0 text-center -mt-16 relative z-10">
-                <div id="profileModalAvatar" class="w-28 h-28 mx-auto rounded-3xl bg-white flex items-center justify-center text-6xl shadow-glass border-4 border-white rotate-3 mb-4">
-                    👤
-                </div>
+                <div id="profileModalAvatar" class="w-28 h-28 mx-auto rounded-3xl bg-white flex items-center justify-center text-6xl shadow-glass border-4 border-white rotate-3 mb-4">👤</div>
                 <h3 id="profileModalName" class="text-2xl font-extrabold text-slate-800 tracking-tight">Name</h3>
                 <div class="flex items-center justify-center gap-2 mt-2">
-                    <span id="profileModalRole" class="px-3 py-1 bg-violet-100 text-violet-700 rounded-full text-xs font-bold uppercase tracking-wider">Role</span>
+                    <span id="profileModalRole" class="px-3 py-1 bg-violet-100 text-violet-700 rounded-full text-xs font-bold uppercase">Role</span>
                     <span id="profileModalPronouns" class="px-3 py-1 bg-slate-100 text-slate-500 rounded-full text-xs font-bold hidden">Pronouns</span>
                 </div>
-                
                 <div class="mt-6 bg-slate-50 rounded-3xl p-5 border border-slate-100 text-left">
                     <h4 class="text-xs font-black text-slate-400 uppercase tracking-widest mb-2">The Vibe / Bio</h4>
                     <p id="profileModalBio" class="text-slate-700 font-medium leading-relaxed italic">No bio provided yet.</p>
                 </div>
-
-                <button onclick="document.getElementById('profileModal').querySelector('.modal-close').click()" class="mt-6 w-full py-3.5 bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold rounded-2xl transition-all">
-                    Close
-                </button>
+                <button onclick="document.getElementById('profileModal').querySelector('.modal-close').click()" class="mt-6 w-full py-3.5 bg-slate-100 text-slate-600 font-bold rounded-2xl">Close</button>
             </div>
         </div>
     </div>
@@ -654,55 +471,34 @@
     <div id="taskDetailModal" class="modal fixed inset-0 flex items-center justify-center opacity-0 pointer-events-none z-50">
         <div class="modal-overlay absolute inset-0 bg-slate-900/30 backdrop-blur-sm"></div>
         <div class="modal-container bg-white w-11/12 md:max-w-2xl mx-auto rounded-[2.5rem] shadow-float z-50 overflow-y-auto max-h-[90vh] custom-scrollbar border border-slate-100 transform scale-95 transition-transform duration-300 flex flex-col">
-            <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50/50 rounded-t-[2.5rem]">
+            <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
                 <div class="flex items-center gap-3">
                     <span id="detailTaskNumber" class="text-slate-400 font-black font-mono text-sm">#--</span>
-                    <span id="detailTaskState" class="px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider bg-slate-200 text-slate-700">Status</span>
+                    <span id="detailTaskState" class="px-3 py-1 rounded-full text-xs font-black uppercase bg-slate-200 text-slate-700">Status</span>
                 </div>
                 <div class="flex items-center gap-2">
-                    <a id="detailTaskGithubLink" href="#" target="_blank" class="w-10 h-10 bg-slate-100 rounded-full flex items-center justify-center text-slate-500 hover:text-slate-800 hover:bg-slate-200 transition-colors" title="View on GitHub">
-                        <i class="fa-brands fa-github text-lg"></i>
-                    </a>
-                    <button class="modal-close w-10 h-10 bg-slate-100 rounded-full flex items-center justify-center text-slate-500 hover:text-slate-800 hover:bg-slate-200 transition-colors">
-                        <i class="fa-solid fa-xmark"></i>
-                    </button>
+                    <a id="detailTaskGithubLink" href="#" target="_blank" class="w-10 h-10 bg-slate-100 rounded-full flex items-center justify-center text-slate-500"><i class="fa-brands fa-github text-lg"></i></a>
+                    <button class="modal-close w-10 h-10 bg-slate-100 rounded-full flex items-center justify-center text-slate-500"><i class="fa-solid fa-xmark"></i></button>
                 </div>
             </div>
             <div class="p-8 flex-1">
-                <h2 id="detailTaskTitle" class="text-2xl font-extrabold text-slate-800 mb-6 leading-snug">Task Title</h2>
+                <h2 id="detailTaskTitle" class="text-2xl font-extrabold text-slate-800 mb-6">Task Title</h2>
                 <div class="mb-8">
-                    <h4 class="text-xs font-black text-slate-400 uppercase tracking-widest mb-3">The Details</h4>
-                    <div id="detailTaskBody" class="prose prose-slate prose-sm max-w-none text-slate-700 font-medium leading-relaxed bg-slate-50 p-5 rounded-3xl border border-slate-100 custom-scrollbar overflow-hidden">
-                        <!-- Markdown content -->
-                    </div>
+                    <h4 class="text-xs font-black text-slate-400 uppercase mb-3">The Details</h4>
+                    <div id="detailTaskBody" class="prose prose-slate prose-sm max-w-none text-slate-700 font-medium leading-relaxed bg-slate-50 p-5 rounded-3xl border border-slate-100"></div>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8 bg-white p-5 rounded-3xl border border-slate-100 shadow-sm">
-                    <div>
-                        <h4 class="text-xs font-black text-slate-400 uppercase tracking-widest mb-2">Assignees</h4>
-                        <div id="detailTaskAssignees" class="flex flex-wrap gap-2">
-                            <!-- Assignees -->
-                        </div>
-                    </div>
-                    <div>
-                        <h4 class="text-xs font-black text-slate-400 uppercase tracking-widest mb-2">Deadline</h4>
-                        <div class="flex items-center gap-2 text-slate-700 font-bold bg-slate-50 px-3 py-1.5 rounded-xl w-fit">
-                            🗓️ <span id="detailTaskDateText">Not set</span>
-                        </div>
-                    </div>
+                    <div><h4 class="text-xs font-black text-slate-400 uppercase mb-2">Assignees</h4><div id="detailTaskAssignees" class="flex flex-wrap gap-2"></div></div>
+                    <div><h4 class="text-xs font-black text-slate-400 uppercase mb-2">Deadline</h4><div class="flex items-center gap-2 text-slate-700 font-bold bg-slate-50 px-3 py-1.5 rounded-xl w-fit">🗓️ <span id="detailTaskDateText">Not set</span></div></div>
                 </div>
-                
                 <div class="border-t border-slate-100 pt-6 flex items-center justify-between">
                     <div class="flex items-center gap-3">
                         <label class="text-sm font-bold text-slate-500">Update Status:</label>
-                        <select id="statusSelect" class="px-4 py-2 bg-slate-50 border border-slate-200 rounded-xl font-bold text-slate-700 focus:outline-none focus:border-violet-400">
-                            <option value="open">To Do</option>
-                            <option value="in-progress">Doing</option>
-                            <option value="closed">Done</option>
+                        <select id="statusSelect" class="px-4 py-2 bg-slate-50 border border-slate-200 rounded-xl font-bold text-slate-700 outline-none">
+                            <option value="open">To Do</option><option value="in-progress">Doing</option><option value="closed">Done</option>
                         </select>
                     </div>
-                    <button id="updateStatusBtn" class="px-6 py-2.5 bg-violet-500 text-white font-bold rounded-xl hover:bg-violet-600 transition-all shadow-md shadow-violet-500/20">
-                        Save Vibe
-                    </button>
+                    <button id="updateStatusBtn" class="px-6 py-2.5 bg-violet-500 text-white font-bold rounded-xl shadow-md">Save Vibe</button>
                 </div>
             </div>
         </div>
@@ -715,31 +511,25 @@
             <div class="py-6 px-8">
                 <div class="flex justify-between items-center pb-4 border-b border-slate-100 mb-6">
                     <p class="text-2xl font-extrabold text-slate-800">Drop a File ☁️</p>
-                    <button class="modal-close w-10 h-10 bg-slate-100 rounded-full flex items-center justify-center text-slate-500 hover:text-slate-800 hover:bg-slate-200 transition-colors">
-                        <i class="fa-solid fa-xmark"></i>
-                    </button>
+                    <button class="modal-close w-10 h-10 bg-slate-100 rounded-full flex items-center justify-center text-slate-500"><i class="fa-solid fa-xmark"></i></button>
                 </div>
-
                 <div class="space-y-5">
                     <div>
                         <label class="block text-sm font-bold text-slate-700 mb-1.5 ml-1">File Name <span class="text-pink-500">*</span></label>
-                        <input type="text" id="docFileName" placeholder="e.g. project-brief.md" class="w-full px-5 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-0 focus:border-blue-500 outline-none transition-all font-medium text-slate-800">
+                        <input type="text" id="docFileName" placeholder="e.g. project-brief.md" class="w-full px-5 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl outline-none text-slate-800">
                     </div>
                     <div>
                         <label class="block text-sm font-bold text-slate-700 mb-1.5 ml-1">Folder Path (Optional)</label>
-                        <input type="text" id="docFilePath" placeholder="e.g. docs/marketing" class="w-full px-5 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-0 focus:border-blue-500 outline-none transition-all font-medium text-slate-800">
+                        <input type="text" id="docFilePath" placeholder="e.g. docs" class="w-full px-5 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl outline-none text-slate-800">
                     </div>
                     <div>
                         <label class="block text-sm font-bold text-slate-700 mb-1.5 ml-1">Content (Text/Markdown) <span class="text-pink-500">*</span></label>
-                        <textarea id="docContent" rows="6" placeholder="Write or paste the file contents here..." class="w-full px-5 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-0 focus:border-blue-500 outline-none transition-all font-medium text-slate-800 custom-scrollbar"></textarea>
+                        <textarea id="docContent" rows="6" class="w-full px-5 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl outline-none text-slate-800 custom-scrollbar"></textarea>
                     </div>
                 </div>
-
                 <div class="pt-6 flex justify-end gap-3 border-t border-slate-100 mt-8">
-                    <button type="button" class="modal-close px-6 py-3.5 bg-white border-2 border-slate-100 text-slate-600 font-bold rounded-2xl hover:bg-slate-50 transition-colors">Cancel</button>
-                    <button type="button" id="submitDocBtn" class="px-8 py-3.5 bg-blue-500 text-white font-bold rounded-2xl hover:bg-blue-600 transition-all shadow-lg shadow-blue-500/30 active:scale-95 flex items-center gap-2">
-                        Drop it <i class="fa-solid fa-arrow-up"></i>
-                    </button>
+                    <button type="button" class="modal-close px-6 py-3.5 bg-white border-2 border-slate-100 text-slate-600 font-bold rounded-2xl">Cancel</button>
+                    <button type="button" id="submitDocBtn" class="px-8 py-3.5 bg-blue-500 text-white font-bold rounded-2xl shadow-lg flex items-center gap-2">Drop it <i class="fa-solid fa-arrow-up"></i></button>
                 </div>
             </div>
         </div>
@@ -749,7 +539,7 @@
     <div id="toastContainer" class="fixed bottom-6 right-6 z-[200] flex flex-col gap-3 pointer-events-none"></div>
 
     <script>
-        // --- Users & State Management ---
+        // --- 1. SAFE DATA INITIALIZATION ---
         const defaultUsers = [
             { username: 'Admin', password: 'password123', role: 'admin', avatar: '😎', bg: 'from-slate-700 to-slate-900', pronouns: 'They/Them', bio: 'Keeping the servers running and the vibes immaculate.' },
             { username: 'Ansh Ahuja', password: 'password123', role: 'manager', avatar: '👨‍💻', bg: 'from-violet-500 to-fuchsia-500', pronouns: 'He/Him', bio: 'Building the future, one kanban board at a time. 🚀' },
@@ -757,74 +547,56 @@
             { username: 'Marketing', password: 'password123', role: 'employee', avatar: '✨', bg: 'from-emerald-400 to-teal-500', pronouns: 'She/Her', bio: 'Hyping up the product and spreading good vibes.' }
         ];
 
-        let appUsers = JSON.parse(localStorage.getItem('tt_users'));
-        if (!appUsers || appUsers.length === 0) {
+        let appUsers = [];
+        try {
+            const stored = localStorage.getItem('tt_users_v2'); // Using new key to bypass old corrupt data
+            if (stored) {
+                appUsers = JSON.parse(stored);
+                if (!Array.isArray(appUsers) || appUsers.length === 0) throw new Error("Invalid stored data");
+            } else {
+                appUsers = defaultUsers;
+                localStorage.setItem('tt_users_v2', JSON.stringify(appUsers));
+            }
+        } catch (e) {
+            console.error("Local storage corrupted, resetting users...", e);
             appUsers = defaultUsers;
-            localStorage.setItem('tt_users', JSON.stringify(appUsers));
-        } else {
-            // Ensure backwards compatibility for older DB saves missing bio/pronouns
-            appUsers = appUsers.map(u => ({
-                ...u,
-                pronouns: u.pronouns || '',
-                bio: u.bio || ''
-            }));
+            localStorage.setItem('tt_users_v2', JSON.stringify(appUsers));
         }
 
         const state = {
-            currentUser: JSON.parse(localStorage.getItem('tt_currentUser')) || null,
-            ghAuth: {
-                username: localStorage.getItem('tt_gh_username') || '',
-                token: localStorage.getItem('tt_gh_token') || '',
-                repo: localStorage.getItem('tt_gh_repo') || ''
-            },
-            tasks: [],
-            currentDate: new Date(),
-            draggedTaskId: null
+            currentUser: null,
+            ghAuth: { username: localStorage.getItem('tt_gh_username') || '', token: localStorage.getItem('tt_gh_token') || '', repo: localStorage.getItem('tt_gh_repo') || '' },
+            tasks: [], currentDate: new Date(), draggedTaskId: null
         };
 
-        // DOM Elements
-        const els = {
-            loginScreen: document.getElementById('loginScreen'),
-            mainApp: document.getElementById('mainApp'),
-            views: document.querySelectorAll('.view-section'),
-            navLinks: document.querySelectorAll('.nav-link'),
-            sidebar: document.getElementById('sidebar'),
-            sidebarOverlay: document.getElementById('sidebarOverlay'),
-            headerTitle: document.getElementById('headerTitle')
-        };
+        try {
+            const storedUser = localStorage.getItem('tt_currentUser_v2');
+            if (storedUser) state.currentUser = JSON.parse(storedUser);
+        } catch (e) { console.error("Corrupted current user state."); }
 
-        // --- Core Flow & Auth ---
-        
+        // --- 2. CORE FLOW & AUTH ---
         function init() {
+            console.log("App Initialized successfully!");
             setupEventListeners();
-            if (state.currentUser) {
-                launchApp();
-            } else {
-                els.loginScreen.classList.remove('hidden');
-            }
+            if (state.currentUser) launchApp();
+            else document.getElementById('loginScreen').classList.remove('hidden');
         }
 
         function handleLogin(e) {
             e.preventDefault();
             const userIn = document.getElementById('loginUsername').value.trim();
             const passIn = document.getElementById('loginPassword').value;
-
             const user = appUsers.find(u => u.username.toLowerCase() === userIn.toLowerCase() && u.password === passIn);
             
             if (user) {
                 state.currentUser = user;
-                localStorage.setItem('tt_currentUser', JSON.stringify(user));
-                
+                localStorage.setItem('tt_currentUser_v2', JSON.stringify(user));
                 const btn = document.querySelector('#loginForm button');
-                btn.innerHTML = 'Vibe Check Passed ✅';
-                btn.classList.add('bg-emerald-500');
+                btn.innerHTML = 'Vibe Check Passed ✅'; btn.classList.add('bg-emerald-500');
                 
                 setTimeout(() => {
-                    els.loginScreen.classList.add('opacity-0');
-                    setTimeout(() => {
-                        els.loginScreen.classList.add('hidden');
-                        launchApp();
-                    }, 500);
+                    document.getElementById('loginScreen').classList.add('opacity-0');
+                    setTimeout(() => { document.getElementById('loginScreen').classList.add('hidden'); launchApp(); }, 500);
                 }, 800);
             } else {
                 showToast('Wrong vibes (invalid username or password)', 'error');
@@ -834,34 +606,30 @@
         function handleLogout(e) {
             if(e) e.stopPropagation();
             state.currentUser = null;
-            localStorage.removeItem('tt_currentUser');
-            location.reload(); // Hard reset to clear memory
+            localStorage.removeItem('tt_currentUser_v2');
+            location.reload(); 
         }
 
         function launchApp() {
-            els.mainApp.classList.remove('hidden');
+            document.getElementById('mainApp').classList.remove('hidden');
             
-            // Setup Profile Info
+            // Profile Info Setup
             document.getElementById('sidebarUsername').textContent = state.currentUser.username;
             document.getElementById('sidebarRole').textContent = state.currentUser.role.toUpperCase();
             document.getElementById('sidebarAvatar').innerHTML = state.currentUser.avatar;
-            document.getElementById('sidebarAvatar').className = `w-10 h-10 rounded-xl bg-gradient-to-br ${state.currentUser.bg || 'from-violet-500 to-fuchsia-500'} flex items-center justify-center font-bold text-lg text-white shadow-md border-2 border-white`;
+            document.getElementById('sidebarAvatar').className = `w-10 h-10 rounded-xl bg-gradient-to-br ${state.currentUser.bg} flex items-center justify-center font-bold text-lg text-white shadow-md border-2 border-white`;
             
             document.getElementById('myName').textContent = state.currentUser.username;
             document.getElementById('myRole').textContent = state.currentUser.role.toUpperCase();
             document.getElementById('myAvatar').innerHTML = state.currentUser.avatar;
-            document.getElementById('myAvatar').className = `w-20 h-20 shrink-0 rounded-2xl bg-gradient-to-br ${state.currentUser.bg || 'from-violet-500 to-fuchsia-500'} flex items-center justify-center font-bold text-4xl text-white shadow-lg rotate-3 border-4 border-white`;
-            
-            // Pre-fill profile form
+            document.getElementById('myAvatar').className = `w-20 h-20 shrink-0 rounded-2xl bg-gradient-to-br ${state.currentUser.bg} flex items-center justify-center font-bold text-4xl text-white shadow-lg rotate-3 border-4 border-white`;
             document.getElementById('myPronouns').value = state.currentUser.pronouns || '';
             document.getElementById('myBio').value = state.currentUser.bio || '';
 
-            // Permissions config
+            // Permissions Check
             if (state.currentUser.role === 'admin' || state.currentUser.role === 'manager') {
                 document.getElementById('adminSettingsBlock').classList.remove('hidden');
                 document.getElementById('nonAdminNotice').classList.add('hidden');
-                
-                // Fill GH Form
                 document.getElementById('ghUsername').value = state.ghAuth.username;
                 document.getElementById('ghToken').value = state.ghAuth.token;
                 document.getElementById('ghRepo').value = state.ghAuth.repo;
@@ -876,138 +644,87 @@
         }
 
         function setupEventListeners() {
-            // Login
             document.getElementById('loginForm').addEventListener('submit', handleLogin);
-
-            // My Profile Updates
             document.getElementById('myProfileForm').addEventListener('submit', handleSaveProfile);
-
-            // Add User
             document.getElementById('addEmployeeForm').addEventListener('submit', handleAddUser);
-
-            // Navigation
-            els.navLinks.forEach(link => {
-                link.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    switchView(link.getAttribute('data-view'));
-                    closeMobileSidebar();
-                });
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.addEventListener('click', (e) => { e.preventDefault(); switchView(link.getAttribute('data-view')); closeMobileSidebar(); });
             });
-
-            // Sidebar toggles
-            document.getElementById('openSidebarBtn').addEventListener('click', openMobileSidebar);
+            document.getElementById('openSidebarBtn').addEventListener('click', () => { document.getElementById('sidebar').style.transform = 'translateX(0)'; document.getElementById('sidebarOverlay').classList.remove('hidden'); });
             document.getElementById('closeSidebarBtn').addEventListener('click', closeMobileSidebar);
-            els.sidebarOverlay.addEventListener('click', closeMobileSidebar);
+            document.getElementById('sidebarOverlay').addEventListener('click', closeMobileSidebar);
 
-            // GH Settings
+            // Settings 
             document.getElementById('toggleTokenVisibility').addEventListener('click', function() {
-                const input = document.getElementById('ghToken');
-                const icon = this.querySelector('i');
-                if (input.type === 'password') {
-                    input.type = 'text';
-                    icon.classList.replace('fa-eye', 'fa-eye-slash');
-                } else {
-                    input.type = 'password';
-                    icon.classList.replace('fa-eye-slash', 'fa-eye');
-                }
+                const i = document.getElementById('ghToken'); const icon = this.querySelector('i');
+                if (i.type === 'password') { i.type = 'text'; icon.classList.replace('fa-eye', 'fa-eye-slash'); } 
+                else { i.type = 'password'; icon.classList.replace('fa-eye-slash', 'fa-eye'); }
             });
             document.getElementById('saveGhSettingsBtn').addEventListener('click', saveGhSettings);
             document.getElementById('disconnectGhBtn').addEventListener('click', disconnectGhAuth);
 
             // Modals
             document.querySelectorAll('.modal-overlay, .modal-close').forEach(el => {
-                el.addEventListener('click', () => {
-                    document.querySelectorAll('.modal').forEach(m => toggleModal(m.id, false));
-                });
+                el.addEventListener('click', () => document.querySelectorAll('.modal').forEach(m => toggleModal(m.id, false)));
             });
 
             // Forms
             document.getElementById('newTaskForm').addEventListener('submit', handleCreateTask);
             document.getElementById('submitDocBtn').addEventListener('click', handleUploadDoc);
             document.getElementById('updateStatusBtn').addEventListener('click', handleUpdateTaskStatus);
-
-            // Calendar
-            document.getElementById('prevMonthBtn').addEventListener('click', () => changeMonth(-1));
-            document.getElementById('nextMonthBtn').addEventListener('click', () => changeMonth(1));
+            document.getElementById('prevMonthBtn').addEventListener('click', () => { state.currentDate.setMonth(state.currentDate.getMonth() - 1); renderCalendar(); });
+            document.getElementById('nextMonthBtn').addEventListener('click', () => { state.currentDate.setMonth(state.currentDate.getMonth() + 1); renderCalendar(); });
         }
 
         function handleSaveProfile(e) {
             e.preventDefault();
             const pronouns = document.getElementById('myPronouns').value.trim();
             const bio = document.getElementById('myBio').value.trim();
-
-            state.currentUser.pronouns = pronouns;
-            state.currentUser.bio = bio;
-            
-            // Update in DB
+            state.currentUser.pronouns = pronouns; state.currentUser.bio = bio;
             const userIndex = appUsers.findIndex(u => u.username === state.currentUser.username);
             if (userIndex !== -1) {
-                appUsers[userIndex].pronouns = pronouns;
-                appUsers[userIndex].bio = bio;
-                localStorage.setItem('tt_users', JSON.stringify(appUsers));
-                localStorage.setItem('tt_currentUser', JSON.stringify(state.currentUser));
+                appUsers[userIndex].pronouns = pronouns; appUsers[userIndex].bio = bio;
+                localStorage.setItem('tt_users_v2', JSON.stringify(appUsers));
+                localStorage.setItem('tt_currentUser_v2', JSON.stringify(state.currentUser));
             }
-            
             showToast('Profile vibe updated! 🪪', 'success');
         }
 
         function handleAddUser(e) {
             e.preventDefault();
             const name = document.getElementById('settingsEmpName').value.trim();
-            const pass = document.getElementById('settingsEmpPass').value.trim();
-            const role = document.getElementById('settingsEmpRole').value;
-
-            if (appUsers.find(u => u.username.toLowerCase() === name.toLowerCase())) {
-                return showToast('User already exists in the squad!', 'error');
-            }
-
+            if (appUsers.find(u => u.username.toLowerCase() === name.toLowerCase())) return showToast('User already exists!', 'error');
+            
             const emojis = ['👾','🦊','🐼','🦄','🦖','🍩','🎮','🎨'];
             const bgs = ['from-indigo-400 to-cyan-400', 'from-pink-400 to-rose-400', 'from-lime-400 to-emerald-400', 'from-amber-400 to-orange-500'];
-
             appUsers.push({
-                username: name,
-                password: pass,
-                role: role,
-                avatar: emojis[Math.floor(Math.random() * emojis.length)],
-                bg: bgs[Math.floor(Math.random() * bgs.length)]
+                username: name, password: document.getElementById('settingsEmpPass').value.trim(), role: document.getElementById('settingsEmpRole').value,
+                avatar: emojis[Math.floor(Math.random() * emojis.length)], bg: bgs[Math.floor(Math.random() * bgs.length)], pronouns: '', bio: ''
             });
-
-            localStorage.setItem('tt_users', JSON.stringify(appUsers));
+            localStorage.setItem('tt_users_v2', JSON.stringify(appUsers));
             document.getElementById('addEmployeeForm').reset();
-            renderEmployees();
-            showToast(`${name} added to the squad!`, 'success');
+            renderEmployees(); showToast(`${name} added!`, 'success');
         }
 
         function renderEmployees() {
-            const container = document.getElementById('employeesList');
-            if(!container) return;
-            container.innerHTML = '';
-            
+            const container = document.getElementById('employeesList'); if(!container) return; container.innerHTML = '';
             appUsers.forEach((emp, index) => {
                 const isMe = emp.username === state.currentUser?.username;
-                // Fake active status for the current user and admin for vibe
-                const isActive = isMe || emp.username === 'Admin';
+                const isActive = isMe || emp.username === 'Admin'; // Admin always looks online
+                let actionHtml = isMe ? '<span class="px-5 py-2 bg-slate-100 text-slate-500 text-xs font-bold rounded-xl uppercase">You</span>' : 
+                                 ((state.currentUser.role === 'admin' || state.currentUser.role === 'manager') ? 
+                                 `<button onclick="event.stopPropagation(); removeUser(${index})" class="w-10 h-10 flex items-center justify-center text-red-400 hover:text-white hover:bg-red-500 bg-red-50 border border-red-100 rounded-xl transition-colors shadow-sm"><i class="fa-solid fa-trash"></i></button>` : '');
                 
-                let actionHtml = '';
-                if (isMe) {
-                    actionHtml = '<span class="px-5 py-2 bg-slate-100 text-slate-500 text-xs font-bold rounded-xl uppercase tracking-widest">You</span>';
-                } else if (state.currentUser.role === 'admin' || state.currentUser.role === 'manager') {
-                    actionHtml = `<button onclick="event.stopPropagation(); removeUser(${index})" class="w-10 h-10 flex items-center justify-center text-red-400 hover:text-white hover:bg-red-500 bg-red-50 border border-red-100 rounded-xl transition-colors shadow-sm" title="Remove User"><i class="fa-solid fa-trash"></i></button>`;
-                }
-
                 container.innerHTML += `
                     <div onclick="openProfileModal('${emp.username}')" class="bg-white rounded-[2rem] shadow-sm border border-slate-100 overflow-hidden hover:shadow-float transition-all hover:-translate-y-1 group relative cursor-pointer">
                         <div class="h-32 bg-gradient-to-tr ${emp.bg} relative overflow-hidden">
                             <div class="absolute inset-0 bg-white/20 backdrop-blur-[2px]"></div>
                             <div class="absolute -bottom-8 left-6">
                                 <div class="w-24 h-24 rounded-2xl bg-white flex items-center justify-center text-5xl border-4 border-white shadow-md relative rotate-3 group-hover:rotate-0 transition-transform">
-                                    ${emp.avatar}
-                                    ${isActive ? '<div class="absolute -bottom-1 -right-1 w-5 h-5 bg-emerald-400 border-[3px] border-white rounded-full"></div>' : ''}
+                                    ${emp.avatar} ${isActive ? '<div class="absolute -bottom-1 -right-1 w-5 h-5 bg-emerald-400 border-[3px] border-white rounded-full"></div>' : ''}
                                 </div>
                             </div>
-                            <div class="absolute top-4 right-4 bg-white/30 backdrop-blur-md px-4 py-1.5 rounded-full text-white text-[10px] uppercase font-black tracking-widest border border-white/50 shadow-sm">
-                                ${emp.role}
-                            </div>
+                            <div class="absolute top-4 right-4 bg-white/30 backdrop-blur-md px-4 py-1.5 rounded-full text-white text-[10px] uppercase font-black border border-white/50">${emp.role}</div>
                         </div>
                         <div class="pt-12 pb-6 px-6">
                             <h3 class="font-extrabold text-slate-800 text-xl tracking-tight">${emp.username}</h3>
@@ -1016,183 +733,90 @@
                                 ${actionHtml}
                             </div>
                         </div>
-                    </div>
-                `;
+                    </div>`;
             });
-            
-            const dashCount = document.getElementById('dashEmployeesCount');
-            if(dashCount) dashCount.textContent = appUsers.length;
+            document.getElementById('dashEmployeesCount').textContent = appUsers.length;
         }
 
         function openProfileModal(username) {
-            const user = appUsers.find(u => u.username === username);
-            if(!user) return;
-
+            const user = appUsers.find(u => u.username === username); if(!user) return;
             document.getElementById('profileModalBg').className = `h-32 bg-gradient-to-tr ${user.bg} relative`;
             document.getElementById('profileModalAvatar').innerHTML = user.avatar;
             document.getElementById('profileModalName').textContent = user.username;
             document.getElementById('profileModalRole').textContent = user.role;
-            
             const pronounsEl = document.getElementById('profileModalPronouns');
-            if(user.pronouns) {
-                pronounsEl.textContent = user.pronouns;
-                pronounsEl.classList.remove('hidden');
-            } else {
-                pronounsEl.classList.add('hidden');
-            }
-
-            document.getElementById('profileModalBio').innerHTML = user.bio ? escapeHtml(user.bio) : '<span class="text-slate-400">No bio provided yet. Just mysterious vibes. 🌫️</span>';
-            
+            if(user.pronouns) { pronounsEl.textContent = user.pronouns; pronounsEl.classList.remove('hidden'); } else pronounsEl.classList.add('hidden');
+            document.getElementById('profileModalBio').innerHTML = user.bio ? escapeHtml(user.bio) : '<span class="text-slate-400">No bio provided. Just mysterious vibes. 🌫️</span>';
             toggleModal('profileModal', true);
         }
 
         window.removeUser = function(index) {
-            if(confirm('Kick this user from the squad?')) {
-                appUsers.splice(index, 1);
-                localStorage.setItem('tt_users', JSON.stringify(appUsers));
-                renderEmployees();
-            }
-        }
+            if(confirm('Kick this user?')) { appUsers.splice(index, 1); localStorage.setItem('tt_users_v2', JSON.stringify(appUsers)); renderEmployees(); }
+        };
 
+        // --- 3. GITHUB API LOGIC ---
         function checkGitHubStatus() {
             const isAuth = !!(state.ghAuth.token && state.ghAuth.repo);
-            const warningBanner = document.getElementById('ghWarningBanner');
-
             if (isAuth) {
-                document.getElementById('disconnectGhBtn').classList.remove('hidden');
-                warningBanner.classList.add('hidden');
+                document.getElementById('disconnectGhBtn').classList.remove('hidden'); document.getElementById('ghWarningBanner').classList.add('hidden');
                 refreshData();
             } else {
-                document.getElementById('disconnectGhBtn').classList.add('hidden');
-                warningBanner.classList.remove('hidden');
-                if(state.currentUser.role === 'admin' || state.currentUser.role === 'manager') {
-                    showToast('Connect GitHub in Config to unlock tasks & docs.', 'info');
-                }
+                document.getElementById('disconnectGhBtn').classList.add('hidden'); document.getElementById('ghWarningBanner').classList.remove('hidden');
             }
         }
 
         function saveGhSettings() {
-            const user = document.getElementById('ghUsername').value.trim();
-            const token = document.getElementById('ghToken').value.trim();
-            const repo = document.getElementById('ghRepo').value.trim();
+            const user = document.getElementById('ghUsername').value.trim(), token = document.getElementById('ghToken').value.trim(), repo = document.getElementById('ghRepo').value.trim();
+            if (!token || !repo || !repo.includes('/')) return showToast('Valid Token and owner/repo required.', 'error');
+            const btn = document.getElementById('saveGhSettingsBtn'); btn.innerHTML = 'Connecting...'; btn.disabled = true;
 
-            if (!token || !repo) return showToast('Token and Repo are required.', 'error');
-            if (!repo.includes('/')) return showToast('Repo must be owner/repo', 'error');
-
-            const btn = document.getElementById('saveGhSettingsBtn');
-            const originalText = btn.innerHTML;
-            btn.innerHTML = 'Connecting...';
-            btn.disabled = true;
-
-            fetch(`https://api.github.com/repos/${repo}`, {
-                headers: { 'Authorization': `token ${token}`, 'Accept': 'application/vnd.github.v3+json' }
-            })
-            .then(res => {
-                if (res.ok) return res.json();
-                throw new Error('Connection failed. Bad token or repo.');
-            })
+            fetch(`https://api.github.com/repos/${repo}`, { headers: { 'Authorization': `token ${token}`, 'Accept': 'application/vnd.github.v3+json' } })
+            .then(res => { if (res.ok) return res.json(); throw new Error('Connection failed.'); })
             .then(() => {
-                localStorage.setItem('tt_gh_username', user);
-                localStorage.setItem('tt_gh_token', token);
-                localStorage.setItem('tt_gh_repo', repo);
-                state.ghAuth = { username: user, token, repo };
-                
-                showToast('GitHub Vibes Connected! ✨', 'success');
-                checkGitHubStatus();
+                localStorage.setItem('tt_gh_username', user); localStorage.setItem('tt_gh_token', token); localStorage.setItem('tt_gh_repo', repo);
+                state.ghAuth = { username: user, token, repo }; showToast('Connected! ✨', 'success'); checkGitHubStatus();
             })
-            .catch(err => showToast(err.message, 'error'))
-            .finally(() => { btn.innerHTML = originalText; btn.disabled = false; });
+            .catch(err => showToast(err.message, 'error')).finally(() => { btn.innerHTML = 'Connect App'; btn.disabled = false; });
         }
 
         function disconnectGhAuth() {
-            localStorage.removeItem('tt_gh_username');
-            localStorage.removeItem('tt_gh_token');
-            localStorage.removeItem('tt_gh_repo');
-            state.ghAuth = { username: '', token: '', repo: '' };
-            checkGitHubStatus();
-            showToast('Disconnected from GitHub', 'info');
+            localStorage.removeItem('tt_gh_username'); localStorage.removeItem('tt_gh_token'); localStorage.removeItem('tt_gh_repo');
+            state.ghAuth = { username: '', token: '', repo: '' }; checkGitHubStatus(); showToast('Disconnected', 'info');
         }
 
         async function githubApi(endpoint, method = 'GET', body = null) {
-            if (!state.ghAuth.token) throw new Error("No GitHub connection");
-            const options = {
-                method,
-                headers: { 'Authorization': `token ${state.ghAuth.token}`, 'Accept': 'application/vnd.github.v3+json', 'Content-Type': 'application/json' }
-            };
+            if (!state.ghAuth.token) throw new Error("No token");
+            const options = { method, headers: { 'Authorization': `token ${state.ghAuth.token}`, 'Accept': 'application/vnd.github.v3+json', 'Content-Type': 'application/json' } };
             if (body) options.body = JSON.stringify(body);
             const response = await fetch(`https://api.github.com/repos/${state.ghAuth.repo}${endpoint}`, options);
-            if (!response.ok) {
-                const err = await response.json().catch(() => ({}));
-                throw new Error(err.message || `Error ${response.status}`);
-            }
-            if (response.status === 204) return null;
-            return response.json();
+            if (!response.ok) throw new Error(`API Error ${response.status}`);
+            if (response.status === 204) return null; return response.json();
         }
 
-        function refreshData() {
-            if(!state.ghAuth.token) return;
-            fetchTasks();
-            if(!document.getElementById('documentsView').classList.contains('hidden')) fetchDocuments(); 
-        }
+        function refreshData() { if(state.ghAuth.token) { fetchTasks(); if(!document.getElementById('documentsView').classList.contains('hidden')) fetchDocuments(); } }
 
         async function fetchTasks() {
             try {
                 const issues = await githubApi('/issues?state=all&per_page=100');
-                state.tasks = issues.filter(i => !i.pull_request).map(issue => {
-                    let dueDate = null;
-                    const dueMatch = issue.body ? issue.body.match(/Due: (\d{4}-\d{2}-\d{2})/) : null;
-                    if (dueMatch) dueDate = dueMatch[1];
-                    let status = issue.state === 'closed' ? 'closed' : 'open';
-                    if (status === 'open' && issue.labels.some(l => l.name.toLowerCase() === 'in progress' || l.name.toLowerCase() === 'doing')) status = 'in-progress';
-
-                    return {
-                        id: issue.id, number: issue.number, title: issue.title, body: issue.body || '',
-                        status: status, assignees: issue.assignees.map(a => ({ login: a.login, avatar_url: a.avatar_url })),
-                        dueDate: dueDate, created_at: issue.created_at, html_url: issue.html_url, labels: issue.labels
-                    };
+                state.tasks = issues.filter(i => !i.pull_request).map(i => {
+                    let due = i.body ? (i.body.match(/Due: (\d{4}-\d{2}-\d{2})/) || [])[1] : null;
+                    let st = i.state === 'closed' ? 'closed' : (i.labels.some(l => l.name.toLowerCase() === 'in progress' || l.name.toLowerCase() === 'doing') ? 'in-progress' : 'open');
+                    return { id: i.id, number: i.number, title: i.title, body: i.body || '', status: st, assignees: i.assignees.map(a => ({ login: a.login, avatar_url: a.avatar_url })), dueDate: due, created_at: i.created_at, html_url: i.html_url, labels: i.labels };
                 });
-                updateDashboardStats();
-                renderKanban();
-                renderCalendar();
-            } catch (error) {
-                showToast(`Failed tasks: ${error.message}`, 'error');
-            }
+                updateDashboardStats(); renderKanban(); renderCalendar();
+            } catch (e) { console.warn("Task fetch failed", e); }
         }
 
         function updateDashboardStats() {
-            const total = state.tasks.length;
-            const completed = state.tasks.filter(t => t.status === 'closed').length;
-            
-            document.getElementById('dashTotalTasks').textContent = total;
-            document.getElementById('dashCompletedTasks').textContent = completed;
-            
-            const recentContainer = document.getElementById('dashRecentTasks');
-            recentContainer.innerHTML = '';
+            document.getElementById('dashTotalTasks').textContent = state.tasks.length;
+            document.getElementById('dashCompletedTasks').textContent = state.tasks.filter(t => t.status === 'closed').length;
+            const rc = document.getElementById('dashRecentTasks'); rc.innerHTML = '';
             const recent = [...state.tasks].sort((a,b) => new Date(b.created_at) - new Date(a.created_at)).slice(0, 5);
-            
-            if (recent.length === 0) {
-                recentContainer.innerHTML = '<div class="p-10 text-center text-slate-400 font-bold">No tasks found. Drop one!</div>';
-            } else {
-                recent.forEach(task => {
-                    let color = task.status === 'closed' ? 'bg-emerald-100 text-emerald-700' : (task.status === 'in-progress' ? 'bg-amber-100 text-amber-700' : 'bg-slate-100 text-slate-600');
-                    let statusText = task.status === 'closed' ? 'Done' : (task.status === 'in-progress' ? 'Doing' : 'To Do');
-
-                    recentContainer.innerHTML += `
-                        <div class="p-4 mb-2 bg-white rounded-2xl border border-slate-100 hover:border-violet-200 flex items-center justify-between transition-all cursor-pointer shadow-sm hover:shadow-md" onclick="openTaskDetail(${task.number})">
-                            <div class="flex items-center gap-4 overflow-hidden">
-                                <div class="w-10 h-10 rounded-xl flex items-center justify-center font-bold text-lg border border-white/50 shadow-sm shrink-0 ${task.status === 'closed' ? 'bg-emerald-100 text-emerald-500' : (task.status === 'in-progress' ? 'bg-amber-100 text-amber-500' : 'bg-slate-100 text-slate-500')}">
-                                    ${task.status === 'closed' ? '✨' : (task.status === 'in-progress' ? '⚡' : '📌')}
-                                </div>
-                                <div class="truncate">
-                                    <p class="text-sm font-extrabold text-slate-800 truncate">${escapeHtml(task.title)}</p>
-                                    <p class="text-xs text-slate-400 font-mono font-bold mt-0.5">#${task.number}</p>
-                                </div>
-                            </div>
-                            <span class="text-xs px-3 py-1 rounded-full font-black uppercase tracking-wider ${color} shrink-0">${statusText}</span>
-                        </div>
-                    `;
-                });
-            }
+            if (recent.length === 0) rc.innerHTML = '<div class="p-10 text-center text-slate-400 font-bold">No tasks found. Drop one!</div>';
+            else recent.forEach(t => {
+                let col = t.status === 'closed' ? 'bg-emerald-100 text-emerald-500' : (t.status === 'in-progress' ? 'bg-amber-100 text-amber-500' : 'bg-slate-100 text-slate-500');
+                rc.innerHTML += `<div class="p-4 mb-2 bg-white rounded-2xl border border-slate-100 flex items-center justify-between cursor-pointer hover:shadow-md transition-all" onclick="openTaskDetail(${t.number})"><div class="flex items-center gap-4 overflow-hidden"><div class="w-10 h-10 rounded-xl flex items-center justify-center font-bold text-lg shadow-sm shrink-0 ${col}">${t.status === 'closed' ? '✨' : '📌'}</div><div class="truncate"><p class="text-sm font-extrabold text-slate-800 truncate">${escapeHtml(t.title)}</p><p class="text-xs text-slate-400 font-mono font-bold mt-0.5">#${t.number}</p></div></div></div>`;
+            });
         }
 
         function renderKanban() {
@@ -1200,354 +824,164 @@
             const counts = { 'open': 0, 'in-progress': 0, 'closed': 0 };
             Object.values(cols).forEach(c => c.innerHTML = '');
 
-            state.tasks.forEach(task => {
-                const targetCol = cols[task.status] || cols['open'];
-                counts[task.status]++;
-                
+            state.tasks.forEach(t => {
+                counts[t.status]++;
                 const card = document.createElement('div');
                 card.className = "bg-white p-4 rounded-2xl shadow-sm border border-slate-100 cursor-grab hover:shadow-md hover:border-violet-200 transition-all active:scale-95 group";
-                card.draggable = true;
-                card.dataset.id = task.number;
-                
-                card.addEventListener('dragstart', (e) => {
-                    state.draggedTaskId = task.number;
-                    e.dataTransfer.setData('text/plain', task.number);
-                    setTimeout(() => card.classList.add('opacity-50'), 0);
-                });
+                card.draggable = true; card.dataset.id = t.number;
+                card.addEventListener('dragstart', (e) => { state.draggedTaskId = t.number; e.dataTransfer.setData('text/plain', t.number); setTimeout(() => card.classList.add('opacity-50'), 0); });
                 card.addEventListener('dragend', () => { card.classList.remove('opacity-50'); state.draggedTaskId = null; });
-
-                let avatars = task.assignees.map(a => `<img src="${a.avatar_url}" class="w-8 h-8 rounded-full border-2 border-white -ml-3 first:ml-0 shadow-sm" title="${a.login}">`).join('');
-                if(!avatars) avatars = '<div class="w-8 h-8 rounded-full bg-slate-100 border-2 border-white flex items-center justify-center text-xs text-slate-400 font-bold shadow-sm">?</div>';
-
-                let dateHtml = task.dueDate ? `<div class="text-xs font-bold ${new Date(task.dueDate) < new Date() && task.status !== 'closed' ? 'text-pink-500 bg-pink-50' : 'text-slate-500 bg-slate-50'} inline-flex items-center gap-1 px-2 py-1 rounded-lg mt-3">🗓️ ${task.dueDate}</div>` : '';
-
-                card.innerHTML = `
-                    <div class="flex justify-between items-start mb-1 gap-2">
-                        <h4 class="text-sm font-extrabold text-slate-800 leading-snug">${escapeHtml(task.title)}</h4>
-                    </div>
-                    <span class="text-[10px] text-slate-400 font-black font-mono">#${task.number}</span><br>
-                    ${dateHtml}
-                    <div class="flex justify-between items-end mt-4">
-                        <div class="flex">${avatars}</div>
-                        <button onclick="openTaskDetail(${task.number})" class="w-8 h-8 rounded-xl bg-slate-50 text-slate-400 hover:text-violet-600 hover:bg-violet-50 transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100">
-                            <i class="fa-solid fa-arrow-up-right-from-square text-xs"></i>
-                        </button>
-                    </div>
-                `;
-                targetCol.appendChild(card);
+                
+                let avs = t.assignees.map(a => `<img src="${a.avatar_url}" class="w-8 h-8 rounded-full border-2 border-white -ml-3 shadow-sm">`).join('');
+                if(!avs) avs = '<div class="w-8 h-8 rounded-full bg-slate-100 border-2 border-white flex items-center justify-center text-xs text-slate-400 font-bold shadow-sm">?</div>';
+                let d = t.dueDate ? `<div class="text-xs font-bold text-slate-500 bg-slate-50 inline-flex items-center gap-1 px-2 py-1 rounded-lg mt-3">🗓️ ${t.dueDate}</div>` : '';
+                
+                card.innerHTML = `<h4 class="text-sm font-extrabold text-slate-800">${escapeHtml(t.title)}</h4><span class="text-[10px] text-slate-400 font-black font-mono">#${t.number}</span><br>${d}<div class="flex justify-between items-end mt-4"><div class="flex pl-3">${avs}</div><button onclick="openTaskDetail(${t.number})" class="w-8 h-8 rounded-xl bg-slate-50 text-slate-400 hover:text-violet-600 hover:bg-violet-50 transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100"><i class="fa-solid fa-arrow-up-right-from-square text-xs"></i></button></div>`;
+                if(cols[t.status]) cols[t.status].appendChild(card);
             });
-
-            document.getElementById('count-todo').textContent = counts['open'];
-            document.getElementById('count-inprogress').textContent = counts['in-progress'];
-            document.getElementById('count-done').textContent = counts['closed'];
+            document.getElementById('count-todo').textContent = counts['open']; document.getElementById('count-inprogress').textContent = counts['in-progress']; document.getElementById('count-done').textContent = counts['closed'];
         }
 
         function allowDrop(ev) { ev.preventDefault(); }
+        async function drop(ev) {
+            ev.preventDefault();
+            if(!state.draggedTaskId) return;
+            let dt = ev.target; while(dt && !dt.classList.contains('kanban-column')) dt = dt.parentElement;
+            if(!dt) return;
+            const ns = dt.getAttribute('data-state'), task = state.tasks.find(t => t.number == state.draggedTaskId);
+            if (task && task.status !== ns) {
+                task.status = ns; renderKanban();
+                try { await updateTaskStatusApi(task.number, ns, task); showToast('Vibe updated ✨', 'success'); } 
+                catch (e) { showToast('Update failed.', 'error'); fetchTasks(); }
+            }
+        }
 
         function renderQuickTags() {
-            const container = document.getElementById('quickTagContainer');
-            container.innerHTML = '';
+            const container = document.getElementById('quickTagContainer'); container.innerHTML = '';
             appUsers.forEach(u => {
                 container.innerHTML += `<button type="button" onclick="addMention('${u.username}')" class="px-3 py-1.5 bg-white border border-slate-200 hover:border-pink-300 hover:bg-pink-50 text-slate-600 hover:text-pink-600 text-xs font-bold rounded-xl transition-all shadow-sm flex items-center gap-1 shrink-0"><span class="w-4 h-4 rounded-full bg-gradient-to-br ${u.bg} text-white flex items-center justify-center text-[8px]">${u.avatar}</span> @${u.username}</button>`;
             });
         }
-
-        function addMention(username) {
-            const textarea = document.getElementById('taskBody');
-            const mention = `@${username} `;
-            
-            // Insert at cursor position or append
-            const start = textarea.selectionStart;
-            const end = textarea.selectionEnd;
-            const text = textarea.value;
-            
-            textarea.value = text.substring(0, start) + mention + text.substring(end);
-            textarea.focus();
-            textarea.selectionEnd = start + mention.length;
-        }
-
-        async function drop(ev) {
-            ev.preventDefault();
-            const taskNumber = state.draggedTaskId;
-            if(!taskNumber) return;
-
-            let dropTarget = ev.target;
-            while(dropTarget && !dropTarget.classList.contains('kanban-column')) { dropTarget = dropTarget.parentElement; }
-            if(!dropTarget) return;
-
-            const newState = dropTarget.getAttribute('data-state');
-            const task = state.tasks.find(t => t.number == taskNumber);
-            
-            if (task && task.status !== newState) {
-                task.status = newState;
-                renderKanban(); 
-                
-                try {
-                    await updateTaskStatusApi(taskNumber, newState, task);
-                    showToast('Vibe updated ✨', 'success');
-                } catch (e) {
-                    showToast('Failed to update. Reverting.', 'error');
-                    fetchTasks(); 
-                }
-            }
-        }
+        window.addMention = function(username) {
+            const ta = document.getElementById('taskBody'), mention = `@${username} `;
+            ta.value = ta.value.substring(0, ta.selectionStart) + mention + ta.value.substring(ta.selectionEnd);
+            ta.focus();
+        };
 
         async function handleCreateTask(e) {
             e.preventDefault();
-            const payload = { 
-                title: document.getElementById('taskTitle').value, 
-                body: document.getElementById('taskBody').value 
-            };
-            const assignee = document.getElementById('taskAssignee').value;
-            const dueDate = document.getElementById('taskDueDate').value;
+            const payload = { title: document.getElementById('taskTitle').value, body: document.getElementById('taskBody').value };
+            if(document.getElementById('taskDueDate').value) payload.body += `\n\n---\n*Due: ${document.getElementById('taskDueDate').value}*`;
+            if(document.getElementById('taskAssignee').value) payload.assignees = [document.getElementById('taskAssignee').value];
 
-            if(dueDate) payload.body += `\n\n---\n*Due: ${dueDate}*`;
-            if(assignee) payload.assignees = [assignee];
-
-            const btn = document.getElementById('submitTaskBtn');
-            btn.innerHTML = 'Dropping... ⏳'; btn.disabled = true;
-
+            const btn = document.getElementById('submitTaskBtn'); btn.innerHTML = 'Dropping... ⏳'; btn.disabled = true;
             try {
-                await githubApi('/issues', 'POST', payload);
-                showToast(`Task created! 🎯`, 'success');
-                toggleModal('newTaskModal', false);
-                document.getElementById('newTaskForm').reset();
-                fetchTasks(); 
-            } catch (err) { showToast(`Error: ${err.message}`, 'error'); } 
-            finally { btn.innerHTML = 'Create Task ✨'; btn.disabled = false; }
+                await githubApi('/issues', 'POST', payload); showToast(`Task created! 🎯`, 'success');
+                toggleModal('newTaskModal', false); document.getElementById('newTaskForm').reset(); fetchTasks(); 
+            } catch (err) { showToast(err.message, 'error'); } finally { btn.innerHTML = 'Create Task ✨'; btn.disabled = false; }
         }
 
-        function openTaskDetail(number) {
-            const task = state.tasks.find(t => t.number == number);
-            if (!task) return;
-
-            document.getElementById('detailTaskNumber').textContent = `#${task.number}`;
-            document.getElementById('detailTaskTitle').textContent = task.title;
+        window.openTaskDetail = function(number) {
+            const task = state.tasks.find(t => t.number == number); if (!task) return;
+            document.getElementById('detailTaskNumber').textContent = `#${task.number}`; document.getElementById('detailTaskTitle').textContent = task.title;
             
-            // Parse Markdown and convert @mentions to clickable badges
-            let parsedBody = task.body ? marked.parse(task.body) : '<i class="text-slate-400">No details dropped.</i>';
-            appUsers.forEach(u => {
-                const regex = new RegExp(`@${u.username}`, 'gi');
-                parsedBody = parsedBody.replace(regex, `<span onclick="openProfileModal('${u.username}')" class="text-pink-600 font-extrabold bg-pink-100 px-2 py-0.5 rounded-lg cursor-pointer hover:bg-pink-200 transition-colors shadow-sm inline-block -my-1">@${u.username}</span>`);
-            });
-            document.getElementById('detailTaskBody').innerHTML = parsedBody;
+            let parsed = task.body ? marked.parse(task.body) : '<i class="text-slate-400">No details dropped.</i>';
+            appUsers.forEach(u => { parsed = parsed.replace(new RegExp(`@${u.username}`, 'gi'), `<span onclick="openProfileModal('${u.username}')" class="text-pink-600 font-extrabold bg-pink-100 px-2 py-0.5 rounded-lg cursor-pointer hover:bg-pink-200 inline-block -my-1">@${u.username}</span>`); });
+            document.getElementById('detailTaskBody').innerHTML = parsed;
             
             document.getElementById('detailTaskGithubLink').href = task.html_url;
-
-            const badge = document.getElementById('detailTaskState');
-            badge.className = `px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider ${task.status === 'closed' ? 'bg-emerald-100 text-emerald-700' : (task.status === 'in-progress' ? 'bg-amber-100 text-amber-700' : 'bg-slate-200 text-slate-700')}`;
-            badge.textContent = task.status === 'closed' ? 'Done' : (task.status === 'in-progress' ? 'Doing' : 'To Do');
-            
             document.getElementById('statusSelect').value = task.status;
-
-            const assignees = document.getElementById('detailTaskAssignees');
-            if(task.assignees.length > 0) {
-                assignees.innerHTML = task.assignees.map(a => `
-                    <div class="flex items-center gap-2 bg-white px-3 py-1.5 rounded-full border border-slate-200 shadow-sm">
-                        <img src="${a.avatar_url}" class="w-6 h-6 rounded-full">
-                        <span class="text-sm font-bold text-slate-700">${a.login}</span>
-                    </div>
-                `).join('');
-            } else { assignees.innerHTML = '<span class="text-sm text-slate-400 font-bold italic">No one assigned</span>'; }
-
+            document.getElementById('detailTaskAssignees').innerHTML = task.assignees.length ? task.assignees.map(a => `<div class="flex items-center gap-2 bg-white px-3 py-1.5 rounded-full border border-slate-200"><img src="${a.avatar_url}" class="w-6 h-6 rounded-full"><span class="text-sm font-bold text-slate-700">${a.login}</span></div>`).join('') : '<span class="text-sm text-slate-400 font-bold italic">No one assigned</span>';
             document.getElementById('detailTaskDateText').textContent = task.dueDate || 'Not set';
             document.getElementById('updateStatusBtn').setAttribute('data-task-number', task.number);
             toggleModal('taskDetailModal', true);
         }
 
         async function handleUpdateTaskStatus() {
-            const btn = document.getElementById('updateStatusBtn');
-            const taskNumber = btn.getAttribute('data-task-number');
-            const newState = document.getElementById('statusSelect').value;
-            const task = state.tasks.find(t => t.number == taskNumber);
-            
-            if(!task || task.status === newState) return toggleModal('taskDetailModal', false);
-
+            const btn = document.getElementById('updateStatusBtn'), num = btn.getAttribute('data-task-number'), ns = document.getElementById('statusSelect').value, task = state.tasks.find(t => t.number == num);
+            if(!task || task.status === ns) return toggleModal('taskDetailModal', false);
             btn.innerHTML = 'Saving... ⏳'; btn.disabled = true;
-            try {
-                await updateTaskStatusApi(taskNumber, newState, task);
-                showToast('Status updated ✨', 'success');
-                toggleModal('taskDetailModal', false);
-                fetchTasks(); 
-            } catch (err) { showToast(`Error: ${err.message}`, 'error'); } 
-            finally { btn.innerHTML = 'Save Vibe'; btn.disabled = false; }
+            try { await updateTaskStatusApi(num, ns, task); showToast('Status updated ✨', 'success'); toggleModal('taskDetailModal', false); fetchTasks(); } 
+            catch (err) { showToast(err.message, 'error'); } finally { btn.innerHTML = 'Save Vibe'; btn.disabled = false; }
         }
 
-        async function updateTaskStatusApi(taskNumber, newState, taskData) {
-            let labels = taskData.labels.map(l => l.name);
-            if (newState === 'in-progress' && !labels.includes('in progress')) labels.push('in progress');
-            else if(newState !== 'in-progress') labels = labels.filter(l => l !== 'in progress');
-
-            await githubApi(`/issues/${taskNumber}`, 'PATCH', { state: newState === 'closed' ? 'closed' : 'open', labels: labels });
+        async function updateTaskStatusApi(num, ns, data) {
+            let labels = data.labels.map(l => l.name).filter(l => l !== 'in progress');
+            if (ns === 'in-progress') labels.push('in progress');
+            await githubApi(`/issues/${num}`, 'PATCH', { state: ns === 'closed' ? 'closed' : 'open', labels: labels });
         }
 
         function renderCalendar() {
-            const grid = document.getElementById('calendarGrid');
-            grid.innerHTML = '';
-            
-            const date = state.currentDate;
-            const year = date.getFullYear(), month = date.getMonth();
-            document.getElementById('currentMonthLabel').textContent = date.toLocaleString('default', { month: 'long', year: 'numeric' });
-
-            const firstDayIndex = new Date(year, month, 1).getDay();
-            const daysInMonth = new Date(year, month + 1, 0).getDate();
-            const today = new Date();
-
-            for (let i = 0; i < firstDayIndex; i++) grid.innerHTML += `<div class="bg-white/20 min-h-[120px] border-r border-white/50"></div>`;
-
-            for (let i = 1; i <= daysInMonth; i++) {
-                const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
-                const isToday = i === today.getDate() && month === today.getMonth() && year === today.getFullYear();
-                const dayTasks = state.tasks.filter(t => t.dueDate === dateStr);
-                
-                let tasksHtml = dayTasks.map(t => {
-                    let style = t.status === 'closed' ? 'bg-emerald-100 text-emerald-700' : 'bg-violet-100 text-violet-700 font-bold';
-                    return `<div onclick="openTaskDetail(${t.number}); event.stopPropagation();" class="text-[10px] truncate px-2 py-1 mb-1 rounded-md cursor-pointer transition-transform hover:scale-[1.02] ${style}" title="${escapeHtml(t.title)}">${escapeHtml(t.title)}</div>`;
-                }).join('');
-
-                grid.innerHTML += `
-                    <div class="bg-white/60 min-h-[120px] p-2 border-r border-white/50 flex flex-col relative group hover:bg-white/80 transition-colors">
-                        <span class="text-sm mb-2 w-7 h-7 flex items-center justify-center rounded-xl ${isToday ? 'bg-violet-500 text-white font-black shadow-md' : 'text-slate-600 font-extrabold'}">${i}</span>
-                        <div class="flex-1 overflow-y-auto custom-scrollbar">${tasksHtml}</div>
-                    </div>
-                `;
+            const grid = document.getElementById('calendarGrid'), d = state.currentDate, y = d.getFullYear(), m = d.getMonth();
+            grid.innerHTML = ''; document.getElementById('currentMonthLabel').textContent = d.toLocaleString('default', { month: 'long', year: 'numeric' });
+            const first = new Date(y, m, 1).getDay(), days = new Date(y, m + 1, 0).getDate(), td = new Date();
+            for (let i = 0; i < first; i++) grid.innerHTML += `<div class="bg-white/20 min-h-[120px] border-r border-white/50"></div>`;
+            for (let i = 1; i <= days; i++) {
+                const dateStr = `${y}-${String(m + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
+                const isToday = i === td.getDate() && m === td.getMonth() && y === td.getFullYear();
+                let html = state.tasks.filter(t => t.dueDate === dateStr).map(t => `<div onclick="openTaskDetail(${t.number}); event.stopPropagation();" class="text-[10px] truncate px-2 py-1 mb-1 rounded-md cursor-pointer ${t.status === 'closed' ? 'bg-emerald-100 text-emerald-700' : 'bg-violet-100 text-violet-700 font-bold'}">${escapeHtml(t.title)}</div>`).join('');
+                grid.innerHTML += `<div class="bg-white/60 min-h-[120px] p-2 border-r border-white/50 flex flex-col"><span class="text-sm mb-2 w-7 h-7 flex items-center justify-center rounded-xl ${isToday ? 'bg-violet-500 text-white font-black shadow-md' : 'text-slate-600 font-extrabold'}">${i}</span><div class="flex-1 overflow-y-auto custom-scrollbar">${html}</div></div>`;
             }
-
-            const remainder = (firstDayIndex + daysInMonth) % 7;
-            if (remainder !== 0) for (let i = 0; i < (7 - remainder); i++) grid.innerHTML += `<div class="bg-white/20 min-h-[120px] border-r border-white/50"></div>`;
         }
-        function changeMonth(delta) { state.currentDate.setMonth(state.currentDate.getMonth() + delta); renderCalendar(); }
 
         async function fetchDocuments() {
-            const tbody = document.getElementById('documentsTableBody');
-            tbody.innerHTML = '<tr><td colspan="4" class="py-8 text-center text-slate-500 font-bold animate-pulse">Loading files... ⏳</td></tr>';
+            const tb = document.getElementById('documentsTableBody'); tb.innerHTML = '<tr><td colspan="4" class="py-8 text-center text-slate-500 font-bold animate-pulse">Loading files...</td></tr>';
             try {
-                const contents = await githubApi('/contents');
-                if(!Array.isArray(contents)) throw new Error("Not a directory");
-                tbody.innerHTML = ''; let hasDocs = false;
-
-                contents.forEach(item => {
-                    if(item.type === 'dir' || item.name.match(/\.(md|txt|csv|json|js|html)$/i)) {
+                const contents = await githubApi('/contents'); if(!Array.isArray(contents)) throw new Error("Not a directory");
+                tb.innerHTML = ''; let hasDocs = false;
+                contents.forEach(i => {
+                    if(i.type === 'dir' || i.name.match(/\.(md|txt|csv|json|js|html|pdf|png|jpg)$/i)) {
                         hasDocs = true;
-                        const icon = item.type === 'dir' ? '📁' : '📄';
-                        tbody.innerHTML += `
-                            <tr class="hover:bg-white/50 transition-colors">
-                                <td class="py-4 px-6 border-b border-white/50 flex items-center gap-3">
-                                    <span class="text-2xl">${icon}</span>
-                                    <span class="font-extrabold text-slate-800">${item.name}</span>
-                                </td>
-                                <td class="py-4 px-6 border-b border-white/50 text-sm font-bold text-slate-400">${item.path}</td>
-                                <td class="py-4 px-6 border-b border-white/50 text-sm font-black text-slate-400 font-mono">${item.type === 'dir' ? '-' : formatBytes(item.size)}</td>
-                                <td class="py-4 px-6 border-b border-white/50 text-right">
-                                    ${item.type === 'file' ? 
-                                    `<a href="${item.html_url}" target="_blank" class="px-3 py-1.5 bg-white border border-slate-200 text-slate-600 font-bold rounded-lg text-xs hover:bg-slate-50 mr-2 shadow-sm transition-all">View</a>
-                                     <button onclick="deleteDocument('${item.path}', '${item.sha}')" class="px-3 py-1.5 bg-red-50 text-red-500 font-bold rounded-lg text-xs hover:bg-red-500 hover:text-white transition-all shadow-sm">Delete</button>` : 
-                                     '<span class="text-[10px] uppercase font-black tracking-widest text-slate-300">Folder</span>'
-                                    }
-                                </td>
-                            </tr>
-                        `;
+                        tb.innerHTML += `<tr class="hover:bg-white/50"><td class="py-4 px-6 border-b border-white/50 flex items-center gap-3"><span class="text-2xl">${i.type === 'dir'?'📁':'📄'}</span><span class="font-extrabold text-slate-800">${i.name}</span></td><td class="py-4 px-6 border-b border-white/50 text-sm font-bold text-slate-400">${i.path}</td><td class="py-4 px-6 border-b border-white/50 text-sm font-black text-slate-400 font-mono">${i.type === 'dir'?'-':formatBytes(i.size)}</td><td class="py-4 px-6 border-b border-white/50 text-right">${i.type === 'file' ? `<a href="${i.html_url}" target="_blank" class="px-3 py-1.5 bg-white border border-slate-200 text-slate-600 font-bold rounded-lg text-xs hover:bg-slate-50 mr-2 shadow-sm">View</a>` : ''}</td></tr>`;
                     }
                 });
-                if(!hasDocs) tbody.innerHTML = '<tr><td colspan="4" class="py-8 text-center text-slate-400 font-bold">No docs found.</td></tr>';
+                if(!hasDocs) tb.innerHTML = '<tr><td colspan="4" class="py-8 text-center text-slate-400 font-bold">No docs found.</td></tr>';
                 document.getElementById('dashDocsCount').textContent = contents.filter(i => i.type === 'file').length;
-            } catch (err) {
-                tbody.innerHTML = `<tr><td colspan="4" class="py-8 text-center text-red-400 font-bold">Error: ${err.message}</td></tr>`;
-                document.getElementById('dashDocsCount').textContent = 'Error';
-            }
+            } catch (err) { tb.innerHTML = `<tr><td colspan="4" class="py-8 text-center text-red-400 font-bold">Error: ${err.message}</td></tr>`; }
         }
 
         async function handleUploadDoc() {
-            let name = document.getElementById('docFileName').value.trim();
-            const pathPrefix = document.getElementById('docFilePath').value.trim();
-            const content = document.getElementById('docContent').value;
+            let name = document.getElementById('docFileName').value.trim(), path = document.getElementById('docFilePath').value.trim(), content = document.getElementById('docContent').value;
             if(!name || !content) return showToast('Name and content required', 'error');
-            
-            const btn = document.getElementById('submitDocBtn');
-            btn.innerHTML = 'Uploading... ⏳'; btn.disabled = true;
-
+            const btn = document.getElementById('submitDocBtn'); btn.innerHTML = 'Uploading...'; btn.disabled = true;
             try {
-                await githubApi(`/contents/${pathPrefix ? `${pathPrefix.replace(/\/$/, '')}/${name}` : name}`, 'PUT', {
-                    message: `Upload via TaskTrack`, content: btoa(unescape(encodeURIComponent(content)))
-                });
-                showToast('Uploaded! ☁️', 'success');
-                toggleModal('uploadDocModal', false);
-                document.getElementById('docFileName').value = ''; document.getElementById('docContent').value = '';
-                fetchDocuments();
-            } catch(err) { showToast(`Upload failed: ${err.message}`, 'error'); } 
-            finally { btn.innerHTML = 'Drop it <i class="fa-solid fa-arrow-up"></i>'; btn.disabled = false; }
+                await githubApi(`/contents/${path ? `${path.replace(/\/$/, '')}/${name}` : name}`, 'PUT', { message: `Upload via TaskTrack`, content: btoa(unescape(encodeURIComponent(content))) });
+                showToast('Uploaded! ☁️', 'success'); toggleModal('uploadDocModal', false);
+                document.getElementById('docFileName').value = ''; document.getElementById('docContent').value = ''; fetchDocuments();
+            } catch(e) { showToast(`Upload failed: ${e.message}`, 'error'); } finally { btn.innerHTML = 'Drop it'; btn.disabled = false; }
         }
 
-        async function deleteDocument(path, sha) {
-            if(!confirm(`Delete ${path}? No going back!`)) return;
-            try {
-                await githubApi(`/contents/${path}`, 'DELETE', { message: `Delete ${path}`, sha: sha });
-                showToast('Deleted 🗑️', 'success'); fetchDocuments();
-            } catch(err) { showToast(`Delete failed: ${err.message}`, 'error'); }
-        }
-
+        // --- 4. UTILITIES ---
         function switchView(viewId) {
-            els.navLinks.forEach(link => {
-                if (link.getAttribute('data-view') === viewId) {
-                    link.classList.add('bg-violet-100', 'text-violet-700'); link.classList.remove('hover:bg-slate-100', 'hover:text-slate-800');
-                } else {
-                    link.classList.remove('bg-violet-100', 'text-violet-700'); link.classList.add('hover:bg-slate-100', 'hover:text-slate-800');
-                }
+            document.querySelectorAll('.nav-link').forEach(l => {
+                if(l.getAttribute('data-view') === viewId) l.classList.add('bg-violet-100', 'text-violet-700');
+                else { l.classList.remove('bg-violet-100', 'text-violet-700'); l.classList.add('hover:bg-slate-100', 'hover:text-slate-800'); }
             });
-            const titles = { dashboard: 'Home Base', tasks: 'The Board 📋', calendar: 'Timeline 🗓️', employees: 'The Squad 👯‍♀️', documents: 'Docs & Files 📁', settings: 'Settings ⚙️' };
-            els.headerTitle.textContent = titles[viewId] || 'TaskTrack';
-            els.views.forEach(v => v.classList.add('hidden'));
-            
+            const titles = { dashboard: 'Home Base', tasks: 'The Board 📋', calendar: 'Timeline 🗓️', employees: 'The Squad (Users) 👯‍♀️', documents: 'Docs & Files 📁', settings: 'Settings ⚙️' };
+            document.getElementById('headerTitle').textContent = titles[viewId] || 'TaskTrack';
+            document.querySelectorAll('.view-section').forEach(v => v.classList.add('hidden'));
             const t = document.getElementById(`${viewId}View`);
-            if (t) {
-                t.classList.remove('hidden');
-                if(viewId === 'documents' && state.ghAuth.token) fetchDocuments();
-                if(viewId === 'calendar') renderCalendar();
-            }
+            if (t) { t.classList.remove('hidden'); if(viewId === 'documents' && state.ghAuth.token) fetchDocuments(); if(viewId === 'calendar') renderCalendar(); }
         }
 
         function toggleModal(id, show) {
-            const m = document.getElementById(id); 
-            if(!m) return;
-            const c = m.querySelector('.modal-container');
-            if(show) {
-                m.classList.remove('opacity-0', 'pointer-events-none');
-                setTimeout(() => c.classList.remove('scale-95'), 10);
-                document.body.classList.add('modal-active');
-            } else {
-                c.classList.add('scale-95');
-                setTimeout(() => m.classList.add('opacity-0', 'pointer-events-none'), 300);
-                document.body.classList.remove('modal-active');
-            }
+            const m = document.getElementById(id); if(!m) return; const c = m.querySelector('.modal-container');
+            if(show) { m.classList.remove('opacity-0', 'pointer-events-none'); setTimeout(() => c.classList.remove('scale-95'), 10); document.body.classList.add('modal-active'); } 
+            else { c.classList.add('scale-95'); setTimeout(() => m.classList.add('opacity-0', 'pointer-events-none'), 300); document.body.classList.remove('modal-active'); }
         }
-
-        function openModal(id) { 
-            if(id === 'newTaskModal') renderQuickTags(); // Refresh tags before opening
-            toggleModal(id, true); 
+        window.openModal = function(id) { if(id === 'newTaskModal') renderQuickTags(); toggleModal(id, true); }
+        function closeMobileSidebar() { if(window.innerWidth < 768) { document.getElementById('sidebar').style.transform = 'translateX(-120%)'; document.getElementById('sidebarOverlay').classList.add('hidden'); } }
+        function showToast(m, t = 'info') {
+            const c = document.getElementById('toastContainer'), el = document.createElement('div');
+            el.className = `toast-enter ${t==='success'?'bg-emerald-500':(t==='error'?'bg-pink-500':'bg-violet-500')} text-white px-5 py-4 rounded-2xl shadow-float font-bold`;
+            el.innerHTML = `<span>${m}</span>`; c.appendChild(el);
+            setTimeout(() => { el.style.opacity = '0'; el.style.transform = 'translateY(10px)'; setTimeout(() => el.remove(), 300); }, 3000);
         }
-        function openMobileSidebar() { els.sidebar.style.transform = 'translateX(0)'; els.sidebarOverlay.classList.remove('hidden'); }
-        function closeMobileSidebar() { if(window.innerWidth < 768) { els.sidebar.style.transform = 'translateX(-120%)'; els.sidebarOverlay.classList.add('hidden'); } }
-
-        function showToast(message, type = 'info') {
-            const container = document.getElementById('toastContainer');
-            const toast = document.createElement('div');
-            const style = type === 'success' ? 'bg-emerald-500' : (type === 'error' ? 'bg-pink-500' : 'bg-violet-500');
-            toast.className = `toast-enter ${style} text-white px-5 py-4 rounded-2xl shadow-float flex items-center gap-3 max-w-sm pointer-events-auto font-bold`;
-            toast.innerHTML = `<span>${message}</span>`;
-            container.appendChild(toast);
-            setTimeout(() => { toast.style.opacity = '0'; toast.style.transform = 'translateY(10px)'; setTimeout(() => toast.remove(), 300); }, 3000);
-        }
-
-        function escapeHtml(unsafe) { return (unsafe || '').replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;"); }
-        function formatBytes(bytes, d = 2) { if (bytes === 0) return '0 B'; const k = 1024, dm = d < 0 ? 0 : d, s = ['B', 'KB', 'MB', 'GB'], i = Math.floor(Math.log(bytes) / Math.log(k)); return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + s[i]; }
-
-        window.addEventListener('resize', () => {
-            if(window.innerWidth >= 768) { els.sidebar.style.transform = 'translateX(0)'; els.sidebarOverlay.classList.add('hidden'); } 
-            else { els.sidebar.style.transform = 'translateX(-120%)'; }
-        });
+        function escapeHtml(u) { return (u || '').replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
+        function formatBytes(b) { if(b===0) return '0 B'; const k = 1024, s = ['B', 'KB', 'MB', 'GB'], i = Math.floor(Math.log(b) / Math.log(k)); return parseFloat((b / Math.pow(k, i)).toFixed(2)) + ' ' + s[i]; }
+        window.addEventListener('resize', () => { if(window.innerWidth >= 768) { document.getElementById('sidebar').style.transform = 'translateX(0)'; document.getElementById('sidebarOverlay').classList.add('hidden'); } else document.getElementById('sidebar').style.transform = 'translateX(-120%)'; });
 
         document.addEventListener('DOMContentLoaded', init);
-
     </script>
 </body>
 </html>
