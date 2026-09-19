@@ -1494,7 +1494,7 @@
                     link.classList.remove('bg-violet-100', 'text-violet-700'); link.classList.add('hover:bg-slate-100', 'hover:text-slate-800');
                 }
             });
-            const titles = { dashboard: 'Home Base', tasks: 'The Board 📋', calendar: 'Timeline 🗓️', employees: 'The Squad 👯‍♀️', documents: 'Docs & Files 📁', settings: 'Config ⚙️' };
+            const titles = { dashboard: 'Home Base', tasks: 'The Board 📋', calendar: 'Timeline 🗓️', employees: 'The Squad 👯‍♀️', documents: 'Docs & Files 📁', settings: 'Settings ⚙️' };
             els.headerTitle.textContent = titles[viewId] || 'TaskTrack';
             els.views.forEach(v => v.classList.add('hidden'));
             
@@ -1507,7 +1507,9 @@
         }
 
         function toggleModal(id, show) {
-            const m = document.getElementById(id); const c = m.querySelector('.modal-container');
+            const m = document.getElementById(id); 
+            if(!m) return;
+            const c = m.querySelector('.modal-container');
             if(show) {
                 m.classList.remove('opacity-0', 'pointer-events-none');
                 setTimeout(() => c.classList.remove('scale-95'), 10);
