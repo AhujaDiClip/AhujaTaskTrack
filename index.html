@@ -82,6 +82,23 @@
         /* ---- OFFLINE BANNER ---- */
         #offlineBanner { transition: transform 0.3s ease; }
 
+        /* ---- ACCENT THEME SYSTEM ---- */
+        :root { --accent-500: #8b5cf6; --accent-600: #7c3aed; --accent-100: #ede9fe; --accent-text: #6d28d9; }
+        [data-theme="blue"]    { --accent-500:#3b82f6; --accent-600:#2563eb; --accent-100:#dbeafe; --accent-text:#1d4ed8; }
+        [data-theme="emerald"] { --accent-500:#10b981; --accent-600:#059669; --accent-100:#d1fae5; --accent-text:#047857; }
+        [data-theme="rose"]    { --accent-500:#f43f5e; --accent-600:#e11d48; --accent-100:#ffe4e6; --accent-text:#be123c; }
+        [data-theme="amber"]   { --accent-500:#f59e0b; --accent-600:#d97706; --accent-100:#fef3c7; --accent-text:#b45309; }
+        [data-theme="indigo"]  { --accent-500:#6366f1; --accent-600:#4f46e5; --accent-100:#e0e7ff; --accent-text:#4338ca; }
+        .theme-accent-bg { background-color: var(--accent-500) !important; }
+        .theme-accent-bg:hover { background-color: var(--accent-600) !important; }
+        .theme-nav-active { background-color: var(--accent-100) !important; color: var(--accent-text) !important; }
+        #notifBadge { background-color: var(--accent-600); }
+        .theme-accent-ring:focus { box-shadow: 0 0 0 4px var(--accent-100) !important; }
+
+        /* ---- ONBOARDING TOUR ---- */
+        #tourOverlay { transition: opacity 0.3s ease; }
+        .tour-highlight { position: relative; z-index: 260; box-shadow: 0 0 0 4px var(--accent-500), 0 0 0 9999px rgba(15,15,20,0.6); border-radius: 1rem; }
+
         /* micro-interactions */
         button, .nav-link, a { -webkit-tap-highlight-color: transparent; }
         button:active:not(:disabled) { transform: scale(0.96); }
@@ -154,6 +171,9 @@
                 <a href="#" class="nav-link flex items-center gap-3 px-4 py-3.5 rounded-2xl hover:bg-slate-100 hover:text-slate-800 transition-all" data-view="documents">
                     <span class="text-xl w-6 text-center">📁</span> Docs
                 </a>
+                <a href="#" class="nav-link flex items-center gap-3 px-4 py-3.5 rounded-2xl hover:bg-slate-100 hover:text-slate-800 transition-all" data-view="activity">
+                    <span class="text-xl w-6 text-center">📜</span> Activity Log
+                </a>
                 <a href="#" class="nav-link flex items-center gap-3 px-4 py-3.5 rounded-2xl hover:bg-slate-100 hover:text-slate-800 transition-all mt-6" data-view="settings">
                     <span class="text-xl w-6 text-center">⚙️</span> Settings
                 </a>
@@ -185,7 +205,23 @@
                     </button>
                     <h1 class="text-3xl font-extrabold text-slate-800 tracking-tight" id="headerTitle">Home Base</h1>
                 </div>
-                <button id="darkModeToggle" title="Toggle dark mode" aria-label="Toggle dark mode" class="w-11 h-11 bg-white shadow-sm border border-slate-100 rounded-2xl flex items-center justify-center text-lg hover:-translate-y-0.5 transition-all active:scale-90">🌙</button>
+                <div class="flex items-center gap-3">
+                    <button id="tourBtn" title="Take the tour" aria-label="Take the tour" class="hidden sm:flex w-11 h-11 bg-white shadow-sm border border-slate-100 rounded-2xl items-center justify-center text-lg hover:-translate-y-0.5 transition-all active:scale-90">🎓</button>
+                    <div class="relative">
+                        <button id="notifBellBtn" title="Notifications" aria-label="Notifications" class="w-11 h-11 bg-white shadow-sm border border-slate-100 rounded-2xl flex items-center justify-center text-lg hover:-translate-y-0.5 transition-all active:scale-90 relative">
+                            🔔
+                            <span id="notifBadge" class="hidden absolute -top-1.5 -right-1.5 bg-pink-500 text-white text-[10px] font-black w-5 h-5 rounded-full items-center justify-center border-2 border-white">0</span>
+                        </button>
+                        <div id="notifPanel" class="hidden absolute right-0 top-14 w-80 max-h-[28rem] overflow-y-auto custom-scrollbar bg-white rounded-2xl shadow-float border border-slate-100 z-50 fade-in">
+                            <div class="p-4 border-b border-slate-100 flex items-center justify-between sticky top-0 bg-white">
+                                <h4 class="font-extrabold text-slate-800">Notifications 🔔</h4>
+                                <button onclick="markAllNotifsRead()" class="text-xs font-bold text-violet-500 hover:text-violet-700">Mark all read</button>
+                            </div>
+                            <div id="notifListContainer" class="divide-y divide-slate-50"></div>
+                        </div>
+                    </div>
+                    <button id="darkModeToggle" title="Toggle dark mode" aria-label="Toggle dark mode" class="w-11 h-11 bg-white shadow-sm border border-slate-100 rounded-2xl flex items-center justify-center text-lg hover:-translate-y-0.5 transition-all active:scale-90">🌙</button>
+                </div>
             </header>
 
             <div class="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 custom-scrollbar relative" id="mainContent">
@@ -226,6 +262,16 @@
                                     </button>
                                 </div>
                             </form>
+                        </div>
+                    </div>
+
+                    <!-- Appearance / Theme -->
+                    <div class="glass-panel rounded-[2rem] shadow-sm border border-white overflow-hidden">
+                        <div class="p-6 md:p-8 bg-white/40">
+                            <h2 class="text-2xl font-extrabold text-slate-800 flex items-center gap-3 mb-2"><span class="text-3xl">🎨</span> Appearance</h2>
+                            <p class="text-slate-500 font-medium ml-11 mb-5">Pick your vibe. Applies just to your device.</p>
+                            <div id="themeSwatches" class="flex flex-wrap gap-3"></div>
+                            <button id="retakeTourBtn" class="mt-6 px-5 py-2.5 bg-white border border-slate-200 rounded-xl font-bold text-sm text-slate-600 hover:bg-slate-50 flex items-center gap-2">🎓 Take the tour again</button>
                         </div>
                     </div>
 
@@ -325,6 +371,15 @@
                         </div>
                         <button onclick="switchView('settings')" class="hidden sm:block px-5 py-2.5 bg-white text-orange-700 font-bold rounded-xl border border-orange-200 hover:bg-orange-50 transition-colors shadow-sm">Go to Settings</button>
                     </div>
+
+                    <!-- Team Announcements -->
+                    <div class="glass-panel rounded-[2rem] shadow-sm border border-white overflow-hidden">
+                        <div class="p-5 sm:p-6 flex items-center justify-between bg-white/40 border-b border-white/50">
+                            <h3 class="font-extrabold text-slate-800 text-lg flex items-center gap-2"><span class="text-2xl">📢</span> Team Announcements</h3>
+                            <button id="newAnnouncementBtn" onclick="openModal('newAnnouncementModal')" class="hidden px-4 py-2.5 bg-slate-800 hover:bg-slate-900 text-white rounded-xl font-bold text-sm shadow-sm transition-all hover:-translate-y-0.5 active:scale-95 flex items-center gap-2"><i class="fa-solid fa-plus"></i> New</button>
+                        </div>
+                        <div id="announcementsList" class="p-5 sm:p-6 space-y-3 max-h-72 overflow-y-auto custom-scrollbar"></div>
+                    </div>
                     <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
                         <div class="bg-white p-6 rounded-[2rem] shadow-sm border border-slate-100 flex flex-col justify-between relative overflow-hidden group hover:shadow-glass transition-all hover:-translate-y-1">
                             <div class="w-12 h-12 rounded-2xl bg-violet-100 text-violet-600 flex items-center justify-center text-xl mb-4 z-10 border border-violet-200">📋</div>
@@ -374,7 +429,7 @@
                             <h2 class="text-3xl font-extrabold text-slate-800 tracking-tight">The Board 📋</h2>
                             <p class="text-slate-500 font-medium mt-1">Drag and drop issues directly to GitHub.</p>
                         </div>
-                        <button onclick="openModal('newTaskModal')" class="bg-violet-500 hover:bg-violet-600 text-white px-6 py-3 rounded-2xl font-bold shadow-lg shadow-violet-500/30 transition-all hover:-translate-y-1 active:scale-95 flex items-center gap-2">
+                        <button onclick="openModal('newTaskModal')" class="bg-violet-500 hover:bg-violet-600 text-white px-6 py-3 rounded-2xl font-bold shadow-lg shadow-violet-500/30 transition-all hover:-translate-y-1 active:scale-95 flex items-center gap-2 theme-accent-bg">
                             <i class="fa-solid fa-plus"></i> New Task
                         </button>
                     </div>
@@ -463,13 +518,42 @@
                         </table>
                     </div>
                 </div>
+
+                <!-- VIEW: Activity Log -->
+                <div id="activityView" class="view-section hidden max-w-3xl mx-auto">
+                    <div class="mb-6">
+                        <h2 class="text-3xl font-extrabold text-slate-800 tracking-tight">Activity Log 📜</h2>
+                        <p class="text-slate-500 font-medium mt-1">Everything the squad has been up to, most recent first.</p>
+                    </div>
+                    <div id="activityLogList" class="space-y-3"></div>
+                </div>
             </div>
         </main>
     </div>
 
-    <!-- MODALS -->
-    
-    <!-- New Task Modal -->
+    <!-- New Announcement Modal -->
+    <div id="newAnnouncementModal" class="modal fixed inset-0 flex items-center justify-center opacity-0 pointer-events-none z-50">
+        <div class="modal-overlay absolute inset-0 bg-slate-900/40 backdrop-blur-sm"></div>
+        <div class="modal-container relative bg-white rounded-[2rem] shadow-float w-full max-w-lg mx-4 overflow-hidden transform scale-95 transition-transform duration-300">
+            <div class="p-6 border-b border-slate-100 flex items-center justify-between">
+                <h3 class="text-xl font-extrabold text-slate-800 flex items-center gap-2"><span class="text-2xl">📢</span> New Announcement</h3>
+                <button class="modal-close w-9 h-9 rounded-full hover:bg-slate-100 flex items-center justify-center text-slate-400"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <form id="newAnnouncementForm" class="p-6 space-y-4">
+                <div>
+                    <label class="block text-sm font-bold text-slate-700 mb-1.5 ml-1">Title</label>
+                    <input type="text" id="announcementTitle" required placeholder="e.g. Office closed Friday 🎉" class="w-full px-5 py-3.5 bg-slate-50 border-2 border-slate-100 rounded-2xl focus:border-slate-400 outline-none font-medium">
+                </div>
+                <div>
+                    <label class="block text-sm font-bold text-slate-700 mb-1.5 ml-1">Message</label>
+                    <textarea id="announcementBody" rows="3" required placeholder="What's the announcement?" class="w-full px-5 py-3.5 bg-slate-50 border-2 border-slate-100 rounded-2xl focus:border-slate-400 outline-none font-medium resize-none"></textarea>
+                </div>
+                <div class="pt-2 flex justify-end">
+                    <button type="submit" class="bg-slate-800 hover:bg-slate-900 text-white px-6 py-3.5 rounded-2xl font-bold shadow-lg transition-all hover:-translate-y-1 active:scale-95">Post Announcement 📌</button>
+                </div>
+            </form>
+        </div>
+    </div>
     <div id="newTaskModal" class="modal fixed inset-0 flex items-center justify-center opacity-0 pointer-events-none z-50">
         <div class="modal-overlay absolute inset-0 bg-slate-900/30 backdrop-blur-sm"></div>
         <div class="modal-container bg-white w-11/12 md:max-w-2xl mx-auto rounded-[2.5rem] shadow-float z-50 overflow-y-auto max-h-[90vh] custom-scrollbar border border-slate-100 transform scale-95 transition-transform duration-300">
@@ -480,15 +564,22 @@
                 </div>
                 <form id="newTaskForm" class="space-y-5">
                     <div>
+                        <label class="block text-sm font-bold text-slate-700 mb-1.5 ml-1">Start from a Template</label>
+                        <select id="taskTemplateSelect" class="w-full px-5 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl outline-none text-slate-800 font-medium">
+                            <option value="">Blank task</option>
+                        </select>
+                    </div>
+                    <div>
                         <label class="block text-sm font-bold text-slate-700 mb-1.5 ml-1">Task Title <span class="text-pink-500">*</span></label>
                         <input type="text" id="taskTitle" required placeholder="What needs to be done?" class="w-full px-5 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl outline-none text-slate-800">
                     </div>
-                    <div>
+                    <div class="relative">
                         <label class="block text-sm font-bold text-slate-700 mb-1.5 ml-1">Details & Tags</label>
                         <div class="bg-slate-50 border border-slate-200 rounded-2xl shadow-sm overflow-hidden p-2">
                             <div class="mb-2 px-2"><span class="text-xs font-black text-slate-400 uppercase">Tag the Squad:</span><div id="quickTagContainer" class="flex gap-2 mt-1.5 overflow-x-auto custom-scrollbar pb-1"></div></div>
-                            <textarea id="taskBody" rows="4" placeholder="Add details... Use buttons above to mention people!" class="w-full px-3 py-2 bg-transparent border-none outline-none font-medium text-slate-800 custom-scrollbar"></textarea>
+                            <textarea id="taskBody" rows="4" placeholder="Add details... type @ to mention someone!" class="w-full px-3 py-2 bg-transparent border-none outline-none font-medium text-slate-800 custom-scrollbar"></textarea>
                         </div>
+                        <div id="mentionAutocomplete" class="hidden absolute z-20 bg-white rounded-2xl shadow-float border border-slate-100 overflow-hidden max-h-52 overflow-y-auto custom-scrollbar w-64"></div>
                     </div>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                         <div>
@@ -500,9 +591,14 @@
                             <input type="date" id="taskDueDate" class="w-full px-5 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl outline-none text-slate-800">
                         </div>
                     </div>
+                    <div>
+                        <label class="block text-sm font-bold text-slate-700 mb-1.5 ml-1">Priority</label>
+                        <div id="prioritySelector" class="grid grid-cols-4 gap-2"></div>
+                        <input type="hidden" id="taskPriority" value="medium">
+                    </div>
                     <div class="pt-6 flex justify-end gap-3 border-t border-slate-100 mt-8">
                         <button type="button" class="modal-close px-6 py-3.5 bg-white border-2 border-slate-100 text-slate-600 font-bold rounded-2xl">Cancel</button>
-                        <button type="submit" class="px-8 py-3.5 bg-violet-500 text-white font-bold rounded-2xl shadow-lg" id="submitTaskBtn">Create Task ✨</button>
+                        <button type="submit" class="px-8 py-3.5 bg-violet-500 text-white font-bold rounded-2xl shadow-lg theme-accent-bg" id="submitTaskBtn">Create Task ✨</button>
                     </div>
                 </form>
             </div>
@@ -540,6 +636,7 @@
                 <div class="flex items-center gap-3">
                     <span id="detailTaskNumber" class="text-slate-400 font-black font-mono text-sm">#--</span>
                     <span id="detailTaskState" class="px-3 py-1 rounded-full text-xs font-black uppercase bg-slate-200 text-slate-700">Status</span>
+                    <span id="detailTaskPriority" class="px-3 py-1 rounded-full text-xs font-black uppercase bg-slate-200 text-slate-700">Priority</span>
                 </div>
                 <div class="flex items-center gap-2">
                     <a id="detailTaskGithubLink" href="#" target="_blank" class="w-10 h-10 bg-slate-100 rounded-full flex items-center justify-center text-slate-500"><i class="fa-brands fa-github text-lg"></i></a>
@@ -548,22 +645,31 @@
             </div>
             <div class="p-8 flex-1">
                 <h2 id="detailTaskTitle" class="text-2xl font-extrabold text-slate-800 mb-6">Task Title</h2>
-                <div class="mb-8">
+                <div class="mb-6">
                     <h4 class="text-xs font-black text-slate-400 uppercase mb-3">The Details</h4>
                     <div id="detailTaskBody" class="prose prose-slate prose-sm max-w-none text-slate-700 font-medium leading-relaxed bg-slate-50 p-5 rounded-3xl border border-slate-100"></div>
                 </div>
+                <div id="reactionBar" class="flex items-center gap-2 mb-8 flex-wrap"></div>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8 bg-white p-5 rounded-3xl border border-slate-100 shadow-sm">
                     <div><h4 class="text-xs font-black text-slate-400 uppercase mb-2">Assignees</h4><div id="detailTaskAssignees" class="flex flex-wrap gap-2"></div></div>
                     <div><h4 class="text-xs font-black text-slate-400 uppercase mb-2">Deadline</h4><div class="flex items-center gap-2 text-slate-700 font-bold bg-slate-50 px-3 py-1.5 rounded-xl w-fit">🗓️ <span id="detailTaskDateText">Not set</span></div></div>
                 </div>
-                <div class="border-t border-slate-100 pt-6 flex items-center justify-between">
+                <div class="border-t border-slate-100 pt-6 flex items-center justify-between mb-8">
                     <div class="flex items-center gap-3">
                         <label class="text-sm font-bold text-slate-500">Update Status:</label>
                         <select id="statusSelect" class="px-4 py-2 bg-slate-50 border border-slate-200 rounded-xl font-bold text-slate-700 outline-none">
                             <option value="open">To Do</option><option value="in-progress">Doing</option><option value="closed">Done</option>
                         </select>
                     </div>
-                    <button id="updateStatusBtn" class="px-6 py-2.5 bg-violet-500 text-white font-bold rounded-xl shadow-md">Save Vibe</button>
+                    <button id="updateStatusBtn" class="px-6 py-2.5 bg-violet-500 text-white font-bold rounded-xl shadow-md theme-accent-bg">Save Vibe</button>
+                </div>
+                <div class="border-t border-slate-100 pt-6">
+                    <h4 class="text-xs font-black text-slate-400 uppercase mb-3">💬 Comments</h4>
+                    <div id="commentsList" class="space-y-3 mb-4 max-h-56 overflow-y-auto custom-scrollbar"></div>
+                    <div class="flex gap-2">
+                        <input type="text" id="newCommentInput" placeholder="Write a comment..." class="flex-1 px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl outline-none text-sm font-medium">
+                        <button id="submitCommentBtn" class="px-5 py-3 bg-slate-800 text-white font-bold rounded-2xl text-sm shrink-0">Post</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -725,6 +831,7 @@
         async function init() {
             console.log("App Initialized successfully!");
             applyDarkModePreference();
+            applyThemePreference();
             setupEventListeners();
             setupOfflineDetection();
             await ensurePasswordsHashed();
@@ -798,7 +905,11 @@
 
             checkGitHubStatus();
             renderEmployees();
+            renderThemeSwatches();
+            renderAnnouncements();
+            renderNotifPanel();
             switchView('dashboard');
+            maybeStartTour();
         }
 
         // --- OFFLINE DETECTION ---
@@ -856,6 +967,30 @@
             const docSearchEl = document.getElementById('docSearchInput');
             if (docSearchEl) docSearchEl.addEventListener('input', (e) => { state.docSearch = e.target.value; const cached = safeJsonGet('tt_cache_docs_v3', []); renderDocumentsTable(cached, !state.isOnline); if (state.isOnline) fetchDocuments(); });
 
+            // Notifications
+            const bellBtn = document.getElementById('notifBellBtn');
+            if (bellBtn) bellBtn.addEventListener('click', (e) => { e.stopPropagation(); document.getElementById('notifPanel').classList.toggle('hidden'); });
+            document.addEventListener('click', (e) => {
+                const panel = document.getElementById('notifPanel'), bell = document.getElementById('notifBellBtn');
+                if (panel && !panel.classList.contains('hidden') && !panel.contains(e.target) && !bell.contains(e.target)) panel.classList.add('hidden');
+            });
+
+            // Tour
+            const tourBtn = document.getElementById('tourBtn'), retakeTourBtn = document.getElementById('retakeTourBtn');
+            if (tourBtn) tourBtn.addEventListener('click', startTour);
+            if (retakeTourBtn) retakeTourBtn.addEventListener('click', startTour);
+
+            // Templates, mentions, comments, announcements
+            const tplSelect = document.getElementById('taskTemplateSelect');
+            if (tplSelect) tplSelect.addEventListener('change', (e) => applyTemplate(e.target.value));
+            setupMentionAutocomplete('taskBody', 'mentionAutocomplete');
+            const commentBtn = document.getElementById('submitCommentBtn');
+            if (commentBtn) commentBtn.addEventListener('click', handlePostComment);
+            const commentInput = document.getElementById('newCommentInput');
+            if (commentInput) commentInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); handlePostComment(); } });
+            const announceForm = document.getElementById('newAnnouncementForm');
+            if (announceForm) announceForm.addEventListener('submit', handleNewAnnouncement);
+
             // Settings 
             document.getElementById('toggleTokenVisibility').addEventListener('click', function() {
                 const i = document.getElementById('ghToken'); const icon = this.querySelector('i');
@@ -912,7 +1047,7 @@
             safeSet('tt_users_v3', JSON.stringify(appUsers));
             document.getElementById('addEmployeeForm').reset();
             if (submitBtn) submitBtn.disabled = false;
-            renderEmployees(); showToast(`${name} added!`, 'success');
+            renderEmployees(); showToast(`${name} added!`, 'success'); logActivity('user_added', `added new colleague "${name}"`);
         }
 
         function renderEmployees() {
@@ -960,7 +1095,7 @@
         }
 
         window.removeUser = function(index) {
-            if(confirm('Kick this user?')) { appUsers.splice(index, 1); safeSet('tt_users_v3', JSON.stringify(appUsers)); renderEmployees(); showToast('User removed.', 'info'); }
+            if(confirm('Kick this user?')) { const removed = appUsers[index]; appUsers.splice(index, 1); safeSet('tt_users_v3', JSON.stringify(appUsers)); renderEmployees(); showToast('User removed.', 'info'); logActivity('user_removed', `removed "${removed?.username}" from the squad`); }
         };
 
         // --- 3. GITHUB API LOGIC ---
@@ -996,7 +1131,7 @@
                 safeSet('tt_gh_username_v3', user); safeSet('tt_gh_repo_v3', repo); safeSet('tt_gh_remember_v3', String(remember));
                 if (remember) { safeSet('tt_gh_token_v3', token); try { sessionStorage.removeItem('tt_gh_token_session_v3'); } catch(e){} }
                 else { try { sessionStorage.setItem('tt_gh_token_session_v3', token); } catch(e){} safeRemove('tt_gh_token_v3'); }
-                state.ghAuth = { username: user, token, repo, remember }; showToast('Connected! ✨', 'success'); checkGitHubStatus();
+                state.ghAuth = { username: user, token, repo, remember }; showToast('Connected! ✨', 'success'); logActivity('github_connected', `connected GitHub repo "${repo}"`); checkGitHubStatus();
             })
             .catch(err => showToast(err.name === 'AbortError' ? 'Connection timed out — check your network.' : err.message, 'error'))
             .finally(() => { btn.innerHTML = 'Connect App'; btn.disabled = false; });
@@ -1008,12 +1143,12 @@
             state.ghAuth = { username: '', token: '', repo: '', remember: true }; checkGitHubStatus(); showToast('Disconnected', 'info');
         }
 
-        async function githubApi(endpoint, method = 'GET', body = null) {
+        async function githubApi(endpoint, method = 'GET', body = null, extraHeaders = {}) {
             if (!state.ghAuth.token) throw new Error("No token");
             if (!state.isOnline) throw new Error("OFFLINE");
             const controller = new AbortController();
             const timeoutId = setTimeout(() => controller.abort(), 15000);
-            const options = { method, headers: { 'Authorization': `token ${state.ghAuth.token}`, 'Accept': 'application/vnd.github.v3+json', 'Content-Type': 'application/json' }, signal: controller.signal };
+            const options = { method, headers: { 'Authorization': `token ${state.ghAuth.token}`, 'Accept': 'application/vnd.github.v3+json', 'Content-Type': 'application/json', ...extraHeaders }, signal: controller.signal };
             if (body) options.body = JSON.stringify(body);
             let response;
             try {
@@ -1038,19 +1173,32 @@
             if (response.status === 204) return null; return response.json();
         }
 
+        const PRIORITY_META = {
+            low: { label: 'Low', emoji: '🧊', class: 'bg-slate-100 text-slate-600' },
+            medium: { label: 'Medium', emoji: '🌊', class: 'bg-blue-100 text-blue-700' },
+            high: { label: 'High', emoji: '🔥', class: 'bg-orange-100 text-orange-700' },
+            urgent: { label: 'Urgent', emoji: '🚨', class: 'bg-red-100 text-red-700' }
+        };
+        function extractPriority(labels) {
+            const found = labels.find(l => /^priority:\s*(low|medium|high|urgent)$/i.test(l.name));
+            return found ? found.name.split(':')[1].trim().toLowerCase() : 'medium';
+        }
+
         function refreshData() { if(state.ghAuth.token) { fetchTasks(); if(!document.getElementById('documentsView').classList.contains('hidden')) fetchDocuments(); } }
 
         async function fetchTasks() {
             renderKanbanSkeleton();
             try {
                 const issues = await githubApi('/issues?state=all&per_page=100');
+                const prevTasks = state.tasks;
                 state.tasks = issues.filter(i => !i.pull_request).map(i => {
                     let due = i.body ? (i.body.match(/Due: (\d{4}-\d{2}-\d{2})/) || [])[1] : null;
                     let st = i.state === 'closed' ? 'closed' : (i.labels.some(l => l.name.toLowerCase() === 'in progress' || l.name.toLowerCase() === 'doing') ? 'in-progress' : 'open');
-                    return { id: i.id, number: i.number, title: i.title, body: i.body || '', status: st, assignees: i.assignees.map(a => ({ login: a.login, avatar_url: a.avatar_url })), dueDate: due, created_at: i.created_at, html_url: i.html_url, labels: i.labels };
+                    return { id: i.id, number: i.number, title: i.title, body: i.body || '', status: st, priority: extractPriority(i.labels), assignees: i.assignees.map(a => ({ login: a.login, avatar_url: a.avatar_url })), dueDate: due, created_at: i.created_at, updated_at: i.updated_at, html_url: i.html_url, labels: i.labels, reactions: i.reactions || {} };
                 });
                 safeSet('tt_cache_tasks_v3', JSON.stringify(state.tasks)); // cache for offline fallback
                 updateDashboardStats(); renderKanban(); renderCalendar();
+                computeNotifications(state.tasks);
             } catch (e) {
                 console.warn("Task fetch failed", e);
                 const cached = safeJsonGet('tt_cache_tasks_v3', null);
@@ -1101,8 +1249,10 @@
                 let avs = t.assignees.map(a => `<img src="${a.avatar_url}" class="w-8 h-8 rounded-full border-2 border-white -ml-3 shadow-sm">`).join('');
                 if(!avs) avs = '<div class="w-8 h-8 rounded-full bg-slate-100 border-2 border-white flex items-center justify-center text-xs text-slate-400 font-bold shadow-sm">?</div>';
                 let d = t.dueDate ? `<div class="text-xs font-bold text-slate-500 bg-slate-50 inline-flex items-center gap-1 px-2 py-1 rounded-lg mt-3">🗓️ ${t.dueDate}</div>` : '';
+                const pm = PRIORITY_META[t.priority] || PRIORITY_META.medium;
+                let prBadge = `<span class="text-[10px] font-black px-2 py-0.5 rounded-lg ${pm.class}">${pm.emoji} ${pm.label}</span>`;
                 
-                card.innerHTML = `<h4 class="text-sm font-extrabold text-slate-800">${escapeHtml(t.title)}</h4><span class="text-[10px] text-slate-400 font-black font-mono">#${t.number}</span><br>${d}<div class="flex justify-between items-end mt-4"><div class="flex pl-3">${avs}</div><button onclick="openTaskDetail(${t.number})" class="w-8 h-8 rounded-xl bg-slate-50 text-slate-400 hover:text-violet-600 hover:bg-violet-50 transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100"><i class="fa-solid fa-arrow-up-right-from-square text-xs"></i></button></div>`;
+                card.innerHTML = `<div class="flex items-center justify-between gap-2 mb-1"><h4 class="text-sm font-extrabold text-slate-800 flex-1">${escapeHtml(t.title)}</h4></div><div class="flex items-center gap-2 flex-wrap"><span class="text-[10px] text-slate-400 font-black font-mono">#${t.number}</span>${prBadge}</div>${d}<div class="flex justify-between items-end mt-4"><div class="flex pl-3">${avs}</div><button onclick="openTaskDetail(${t.number})" class="w-8 h-8 rounded-xl bg-slate-50 text-slate-400 hover:text-violet-600 hover:bg-violet-50 transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100"><i class="fa-solid fa-arrow-up-right-from-square text-xs"></i></button></div>`;
                 if(cols[t.status]) cols[t.status].appendChild(card);
             });
             document.getElementById('count-todo').textContent = counts['open']; document.getElementById('count-inprogress').textContent = counts['in-progress']; document.getElementById('count-done').textContent = counts['closed'];
@@ -1132,6 +1282,8 @@
             appUsers.forEach(u => {
                 container.innerHTML += `<button type="button" onclick="addMention('${u.username}')" class="px-3 py-1.5 bg-white border border-slate-200 hover:border-pink-300 hover:bg-pink-50 text-slate-600 hover:text-pink-600 text-xs font-bold rounded-xl transition-all shadow-sm flex items-center gap-1 shrink-0"><span class="w-4 h-4 rounded-full bg-gradient-to-br ${u.bg} text-white flex items-center justify-center text-[8px]">${u.avatar}</span> @${u.username}</button>`;
             });
+            renderPrioritySelector();
+            renderTemplateOptions();
         }
         window.addMention = function(username) {
             const ta = document.getElementById('taskBody'), mention = `@${username} `;
@@ -1139,25 +1291,99 @@
             ta.focus();
         };
 
+        // --- Priority Selector ---
+        function renderPrioritySelector(selected = 'medium') {
+            const el = document.getElementById('prioritySelector'); if (!el) return;
+            el.innerHTML = Object.entries(PRIORITY_META).map(([key, m]) => `
+                <button type="button" data-priority="${key}" onclick="setTaskPriority('${key}')" class="priority-pill px-2 py-2.5 rounded-xl font-bold text-xs flex flex-col items-center gap-1 border-2 transition-all ${key === selected ? m.class + ' border-current' : 'bg-slate-50 text-slate-400 border-transparent hover:bg-slate-100'}">
+                    <span class="text-lg">${m.emoji}</span>${m.label}
+                </button>`).join('');
+            document.getElementById('taskPriority').value = selected;
+        }
+        window.setTaskPriority = function(key) { renderPrioritySelector(key); };
+
+        // --- Task Templates ---
+        const builtInTemplates = [
+            { id: 'bug', name: '🐛 Bug Report', title: 'Bug: ', body: '**What happened?**\n\n**Steps to reproduce:**\n1. \n2. \n\n**Expected behavior:**\n' },
+            { id: 'feature', name: '💡 Feature Request', title: 'Feature: ', body: '**What problem does this solve?**\n\n**Proposed solution:**\n\n**Nice to haves:**\n' },
+            { id: 'meeting', name: '📝 Meeting Notes', title: 'Meeting notes: ', body: '**Attendees:** \n**Agenda:**\n- \n\n**Action items:**\n- ' },
+            { id: 'standup', name: '📣 Weekly Standup', title: 'Weekly standup', body: '**Done last week:**\n- \n\n**Planned this week:**\n- \n\n**Blockers:**\n- ' }
+        ];
+        function getAllTemplates() { return [...builtInTemplates, ...safeJsonGet('tt_task_templates_v3', [])]; }
+        function renderTemplateOptions() {
+            const sel = document.getElementById('taskTemplateSelect'); if (!sel) return;
+            sel.innerHTML = '<option value="">Blank task</option>' + getAllTemplates().map(t => `<option value="${t.id}">${escapeHtml(t.name)}</option>`).join('');
+        }
+        function applyTemplate(id) {
+            const tpl = getAllTemplates().find(t => t.id === id); if (!tpl) return;
+            document.getElementById('taskTitle').value = tpl.title;
+            document.getElementById('taskBody').value = tpl.body;
+        }
+
+        // --- @mention autocomplete ---
+        function setupMentionAutocomplete(textareaId, dropdownId) {
+            const ta = document.getElementById(textareaId), dd = document.getElementById(dropdownId);
+            if (!ta || !dd) return;
+            let activeIndex = 0, matches = [];
+            function closeDD() { dd.classList.add('hidden'); dd.innerHTML = ''; }
+            function getQuery() {
+                const pos = ta.selectionStart, text = ta.value.slice(0, pos);
+                const m = text.match(/@([a-zA-Z0-9 ._-]{0,20})$/);
+                return m ? m[1] : null;
+            }
+            function render() {
+                const q = getQuery();
+                if (q === null) return closeDD();
+                matches = appUsers.filter(u => u.username.toLowerCase().includes(q.toLowerCase()));
+                if (!matches.length) return closeDD();
+                activeIndex = 0;
+                dd.innerHTML = matches.map((u, i) => `<div data-i="${i}" class="mention-item px-3 py-2 flex items-center gap-2 cursor-pointer ${i === 0 ? 'bg-violet-50' : ''} hover:bg-violet-50"><span class="w-6 h-6 rounded-full bg-gradient-to-br ${u.bg} text-white flex items-center justify-center text-[10px] shrink-0">${u.avatar}</span><span class="font-bold text-sm text-slate-700">${escapeHtml(u.username)}</span></div>`).join('');
+                dd.classList.remove('hidden');
+                dd.querySelectorAll('.mention-item').forEach(item => item.addEventListener('mousedown', (e) => { e.preventDefault(); selectMention(parseInt(item.dataset.i)); }));
+            }
+            function selectMention(i) {
+                const u = matches[i]; if (!u) return;
+                const pos = ta.selectionStart, text = ta.value.slice(0, pos), rest = ta.value.slice(pos);
+                const newText = text.replace(/@([a-zA-Z0-9 ._-]{0,20})$/, `@${u.username} `);
+                ta.value = newText + rest;
+                ta.selectionStart = ta.selectionEnd = newText.length;
+                closeDD(); ta.focus();
+            }
+            ta.addEventListener('input', render);
+            ta.addEventListener('keydown', (e) => {
+                if (dd.classList.contains('hidden')) return;
+                if (e.key === 'ArrowDown') { e.preventDefault(); activeIndex = (activeIndex + 1) % matches.length; updateHighlight(); }
+                else if (e.key === 'ArrowUp') { e.preventDefault(); activeIndex = (activeIndex - 1 + matches.length) % matches.length; updateHighlight(); }
+                else if (e.key === 'Enter' && matches.length) { e.preventDefault(); selectMention(activeIndex); }
+                else if (e.key === 'Escape') closeDD();
+            });
+            function updateHighlight() { dd.querySelectorAll('.mention-item').forEach((el, i) => el.classList.toggle('bg-violet-50', i === activeIndex)); }
+            ta.addEventListener('blur', () => setTimeout(closeDD, 150));
+        }
+
         async function handleCreateTask(e) {
             e.preventDefault();
             if (!state.isOnline) return showToast("You're offline — connect to the internet to create a task.", 'warning');
             const title = document.getElementById('taskTitle').value.trim();
             if (!title) return showToast('Task title is required.', 'error');
-            const payload = { title, body: document.getElementById('taskBody').value };
+            const priority = document.getElementById('taskPriority').value || 'medium';
+            const payload = { title, body: document.getElementById('taskBody').value, labels: [`priority: ${priority}`] };
             if(document.getElementById('taskDueDate').value) payload.body += `\n\n---\n*Due: ${document.getElementById('taskDueDate').value}*`;
             if(document.getElementById('taskAssignee').value) payload.assignees = [document.getElementById('taskAssignee').value];
 
             const btn = document.getElementById('submitTaskBtn'); btn.innerHTML = 'Dropping... ⏳'; btn.disabled = true;
             try {
                 await githubApi('/issues', 'POST', payload); showToast(`Task created! 🎯`, 'success');
-                toggleModal('newTaskModal', false); document.getElementById('newTaskForm').reset(); fetchTasks(); 
+                logActivity('task_created', `created task "${title}"`);
+                toggleModal('newTaskModal', false); document.getElementById('newTaskForm').reset(); renderPrioritySelector('medium'); fetchTasks(); 
             } catch (err) { showToast(err.message, 'error'); } finally { btn.innerHTML = 'Create Task ✨'; btn.disabled = false; }
         }
 
         window.openTaskDetail = function(number) {
             const task = state.tasks.find(t => t.number == number); if (!task) return;
             document.getElementById('detailTaskNumber').textContent = `#${task.number}`; document.getElementById('detailTaskTitle').textContent = task.title;
+            const pm = PRIORITY_META[task.priority] || PRIORITY_META.medium;
+            const prEl = document.getElementById('detailTaskPriority'); prEl.textContent = `${pm.emoji} ${pm.label}`; prEl.className = `px-3 py-1 rounded-full text-xs font-black uppercase ${pm.class}`;
             
             let parsed = task.body ? sanitizeHtml(marked.parse(task.body)) : '<i class="text-slate-400">No details dropped.</i>';
             appUsers.forEach(u => { parsed = parsed.replace(new RegExp(`@${u.username.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}`, 'gi'), `<span onclick="openProfileModal('${u.username}')" class="text-pink-600 font-extrabold bg-pink-100 px-2 py-0.5 rounded-lg cursor-pointer hover:bg-pink-200 inline-block -my-1">@${u.username}</span>`); });
@@ -1168,7 +1394,63 @@
             document.getElementById('detailTaskAssignees').innerHTML = task.assignees.length ? task.assignees.map(a => `<div class="flex items-center gap-2 bg-white px-3 py-1.5 rounded-full border border-slate-200"><img src="${a.avatar_url}" class="w-6 h-6 rounded-full"><span class="text-sm font-bold text-slate-700">${escapeHtml(a.login)}</span></div>`).join('') : '<span class="text-sm text-slate-400 font-bold italic">No one assigned</span>';
             document.getElementById('detailTaskDateText').textContent = task.dueDate || 'Not set';
             document.getElementById('updateStatusBtn').setAttribute('data-task-number', task.number);
+            renderReactionBar(task);
+            loadComments(task.number);
             toggleModal('taskDetailModal', true);
+        }
+
+        // --- Reactions (real GitHub Issue reactions API) ---
+        const REACTION_META = { '+1': '👍', 'heart': '❤️', 'hooray': '🎉', 'rocket': '🚀', 'eyes': '👀' };
+        function renderReactionBar(task) {
+            const bar = document.getElementById('reactionBar'); if (!bar) return;
+            const r = task.reactions || {};
+            bar.innerHTML = Object.entries(REACTION_META).map(([key, emoji]) => {
+                const count = r[key] || 0;
+                return `<button onclick="addReaction(${task.number}, '${key}')" class="px-3 py-1.5 bg-slate-50 hover:bg-violet-50 border border-slate-200 hover:border-violet-200 rounded-full text-sm font-bold flex items-center gap-1.5 transition-all active:scale-90">${emoji} <span class="text-xs text-slate-500">${count}</span></button>`;
+            }).join('');
+        }
+        window.addReaction = async function(number, content) {
+            if (!state.isOnline) return showToast("You're offline — can't react right now.", 'warning');
+            try {
+                await githubApi(`/issues/${number}/reactions`, 'POST', { content }, { 'Accept': 'application/vnd.github.squirrel-girl-preview+json' });
+                const task = state.tasks.find(t => t.number == number);
+                if (task) { task.reactions[content] = (task.reactions[content] || 0) + 1; renderReactionBar(task); }
+                showToast('Reacted! ' + REACTION_META[content], 'success');
+            } catch (e) { showToast(e.message, 'error'); }
+        };
+
+        // --- Comments (real GitHub Issue comments API) ---
+        async function loadComments(number) {
+            const list = document.getElementById('commentsList');
+            list.innerHTML = `<div class="skeleton h-10 rounded-xl"></div>`;
+            try {
+                const comments = await githubApi(`/issues/${number}/comments`);
+                renderComments(comments);
+            } catch (e) {
+                list.innerHTML = `<p class="text-sm text-slate-400 font-medium italic">${state.isOnline ? 'Could not load comments.' : "You're offline — comments unavailable."}</p>`;
+            }
+        }
+        function renderComments(comments) {
+            const list = document.getElementById('commentsList');
+            if (!comments.length) { list.innerHTML = '<p class="text-sm text-slate-400 font-medium italic">No comments yet. Be the first! 💬</p>'; return; }
+            list.innerHTML = comments.map(c => `
+                <div class="bg-slate-50 rounded-2xl p-3 border border-slate-100">
+                    <div class="flex items-center gap-2 mb-1"><img src="${c.user.avatar_url}" class="w-6 h-6 rounded-full"><span class="text-xs font-extrabold text-slate-700">${escapeHtml(c.user.login)}</span><span class="text-[10px] text-slate-400 font-bold">${new Date(c.created_at).toLocaleString()}</span></div>
+                    <p class="text-sm text-slate-600 font-medium whitespace-pre-wrap">${escapeHtml(c.body)}</p>
+                </div>`).join('');
+        }
+        async function handlePostComment() {
+            const input = document.getElementById('newCommentInput'), btn = document.getElementById('submitCommentBtn');
+            const body = input.value.trim(); if (!body) return;
+            const num = document.getElementById('updateStatusBtn').getAttribute('data-task-number');
+            if (!state.isOnline) return showToast("You're offline — can't post a comment right now.", 'warning');
+            btn.disabled = true; btn.textContent = '...';
+            try {
+                await githubApi(`/issues/${num}/comments`, 'POST', { body });
+                input.value = ''; loadComments(num);
+                logActivity('comment_posted', `commented on task #${num}`);
+                showToast('Comment posted 💬', 'success');
+            } catch (e) { showToast(e.message, 'error'); } finally { btn.disabled = false; btn.textContent = 'Post'; }
         }
 
         async function handleUpdateTaskStatus() {
@@ -1176,7 +1458,7 @@
             const btn = document.getElementById('updateStatusBtn'), num = btn.getAttribute('data-task-number'), ns = document.getElementById('statusSelect').value, task = state.tasks.find(t => t.number == num);
             if(!task || task.status === ns) return toggleModal('taskDetailModal', false);
             btn.innerHTML = 'Saving... ⏳'; btn.disabled = true;
-            try { await updateTaskStatusApi(num, ns, task); showToast('Status updated ✨', 'success'); toggleModal('taskDetailModal', false); fetchTasks(); } 
+            try { await updateTaskStatusApi(num, ns, task); showToast('Status updated ✨', 'success'); logActivity('status_changed', `moved task #${num} to "${ns}"`); toggleModal('taskDetailModal', false); fetchTasks(); } 
             catch (err) { showToast(err.message, 'error'); } finally { btn.innerHTML = 'Save Vibe'; btn.disabled = false; }
         }
 
@@ -1236,7 +1518,7 @@
             const btn = document.getElementById('submitDocBtn'); btn.innerHTML = 'Uploading...'; btn.disabled = true;
             try {
                 await githubApi(`/contents/${path ? `${path.replace(/\/$/, '')}/${name}` : name}`, 'PUT', { message: `Upload via TaskTrack`, content: btoa(unescape(encodeURIComponent(content))) });
-                showToast('Uploaded! ☁️', 'success'); toggleModal('uploadDocModal', false);
+                showToast('Uploaded! ☁️', 'success'); logActivity('doc_uploaded', `uploaded "${name}"`); toggleModal('uploadDocModal', false);
                 document.getElementById('docFileName').value = ''; document.getElementById('docContent').value = ''; fetchDocuments();
             } catch(e) { showToast(`Upload failed: ${e.message}`, 'error'); } finally { btn.innerHTML = 'Drop it'; btn.disabled = false; }
         }
@@ -1245,14 +1527,14 @@
         function switchView(viewId) {
             document.querySelectorAll('.nav-link').forEach(l => {
                 if(l.getAttribute('data-view') === viewId) {
-                    l.classList.add('bg-violet-100', 'text-violet-700');
+                    l.classList.add('theme-nav-active');
                     l.classList.remove('hover:bg-slate-100', 'hover:text-slate-800');
                 } else { 
-                    l.classList.remove('bg-violet-100', 'text-violet-700'); 
+                    l.classList.remove('theme-nav-active'); 
                     l.classList.add('hover:bg-slate-100', 'hover:text-slate-800'); 
                 }
             });
-            const titles = { dashboard: 'Home Base', tasks: 'The Board 📋', calendar: 'Calendar 🗓️', employees: 'The Squad (Users) 👯‍♀️', documents: 'Docs & Files 📁', settings: 'Settings ⚙️' };
+            const titles = { dashboard: 'Home Base', tasks: 'The Board 📋', calendar: 'Calendar 🗓️', employees: 'The Squad (Users) 👯‍♀️', documents: 'Docs & Files 📁', settings: 'Settings ⚙️', activity: 'Activity Log 📜' };
             document.getElementById('headerTitle').textContent = titles[viewId] || 'TaskTrack';
             document.querySelectorAll('.view-section').forEach(v => v.classList.add('hidden'));
             
@@ -1261,6 +1543,7 @@
                 t.classList.remove('hidden'); 
                 if(viewId === 'documents' && state.ghAuth.token) fetchDocuments(); 
                 if(viewId === 'calendar') renderCalendar(); 
+                if(viewId === 'activity') renderActivityLog();
             }
         }
 
@@ -1317,6 +1600,226 @@
                 document.getElementById('sidebarOverlay').classList.add('hidden'); 
             }
         });
+
+        // ============ NOTIFICATIONS CENTER ============
+        function notifKey() { return `tt_notifications_${state.currentUser?.username || 'anon'}_v3`; }
+        function notifiedSetKey() { return `tt_notified_keys_${state.currentUser?.username || 'anon'}_v3`; }
+        function getNotifications() { return safeJsonGet(notifKey(), []); }
+        function saveNotifications(list) { safeSet(notifKey(), JSON.stringify(list.slice(0, 50))); }
+
+        function computeNotifications(tasks) {
+            if (!state.currentUser) return;
+            const notifiedKeys = new Set(safeJsonGet(notifiedSetKey(), []));
+            const notifications = getNotifications();
+            let added = false;
+            const me = state.currentUser.username;
+
+            tasks.forEach(t => {
+                // Assigned to me
+                if (t.assignees.some(a => a.login.toLowerCase() === me.toLowerCase())) {
+                    const key = `assign:${t.number}`;
+                    if (!notifiedKeys.has(key)) {
+                        notifications.unshift({ id: key + ':' + Date.now(), type: 'assigned', taskNumber: t.number, message: `You were assigned to "${t.title}"`, read: false, timestamp: Date.now() });
+                        notifiedKeys.add(key); added = true;
+                    }
+                }
+                // Mentioned in body
+                if (t.body && new RegExp(`@${me.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'i').test(t.body)) {
+                    const key = `mention:${t.number}`;
+                    if (!notifiedKeys.has(key)) {
+                        notifications.unshift({ id: key + ':' + Date.now(), type: 'mentioned', taskNumber: t.number, message: `You were mentioned in "${t.title}"`, read: false, timestamp: Date.now() });
+                        notifiedKeys.add(key); added = true;
+                    }
+                }
+            });
+            if (added) { saveNotifications(notifications); safeSet(notifiedSetKey(), JSON.stringify([...notifiedKeys])); renderNotifPanel(); }
+        }
+
+        function renderNotifPanel() {
+            const list = document.getElementById('notifListContainer'), badge = document.getElementById('notifBadge');
+            if (!list) return;
+            const notifs = getNotifications();
+            const unread = notifs.filter(n => !n.read).length;
+            if (badge) { badge.textContent = unread > 9 ? '9+' : unread; badge.classList.toggle('hidden', unread === 0); badge.classList.toggle('flex', unread > 0); }
+            if (!notifs.length) { list.innerHTML = '<div class="p-6 text-center text-sm text-slate-400 font-medium">No notifications yet 🌿</div>'; return; }
+            const icons = { assigned: '🎯', mentioned: '💬', status: '🔄' };
+            list.innerHTML = notifs.map(n => `
+                <div onclick="openNotification('${n.id}')" class="p-4 flex gap-3 cursor-pointer hover:bg-slate-50 transition-colors ${n.read ? 'opacity-50' : ''}">
+                    <span class="text-xl shrink-0">${icons[n.type] || '🔔'}</span>
+                    <div class="flex-1 min-w-0">
+                        <p class="text-sm font-bold text-slate-700 leading-snug">${escapeHtml(n.message)}</p>
+                        <p class="text-[10px] text-slate-400 font-bold mt-1">${new Date(n.timestamp).toLocaleString()}</p>
+                    </div>
+                    ${!n.read ? '<span class="w-2 h-2 rounded-full bg-pink-500 shrink-0 mt-1.5"></span>' : ''}
+                </div>`).join('');
+        }
+        window.openNotification = function(id) {
+            const notifs = getNotifications();
+            const n = notifs.find(x => x.id === id); if (!n) return;
+            n.read = true; saveNotifications(notifs); renderNotifPanel();
+            document.getElementById('notifPanel').classList.add('hidden');
+            if (n.taskNumber) { switchView('tasks'); setTimeout(() => openTaskDetail(n.taskNumber), 200); }
+        };
+        window.markAllNotifsRead = function() {
+            const notifs = getNotifications().map(n => ({ ...n, read: true }));
+            saveNotifications(notifs); renderNotifPanel();
+        };
+
+        // ============ ACTIVITY / AUDIT LOG ============
+        function logActivity(type, detail) {
+            const log = safeJsonGet('tt_activity_log_v3', []);
+            log.unshift({ id: Date.now() + '_' + Math.random().toString(36).slice(2,7), type, detail, user: state.currentUser?.username || 'System', timestamp: Date.now() });
+            safeSet('tt_activity_log_v3', JSON.stringify(log.slice(0, 200)));
+            if (!document.getElementById('activityView').classList.contains('hidden')) renderActivityLog();
+        }
+        function renderActivityLog() {
+            const el = document.getElementById('activityLogList'); if (!el) return;
+            const log = safeJsonGet('tt_activity_log_v3', []);
+            const icons = { task_created: '🎯', status_changed: '🔄', doc_uploaded: '☁️', user_added: '✨', user_removed: '🗑️', comment_posted: '💬', announcement_posted: '📢', github_connected: '🔌', profile_updated: '🪪', reaction: '👍' };
+            if (!log.length) { el.innerHTML = '<div class="glass-panel rounded-[2rem] p-10 text-center text-slate-400 font-medium">Nothing logged yet. Go do something! 🚀</div>'; return; }
+            el.innerHTML = log.map(entry => `
+                <div class="bg-white rounded-2xl p-4 border border-slate-100 shadow-sm flex items-start gap-3 fade-in">
+                    <span class="text-2xl shrink-0">${icons[entry.type] || '📌'}</span>
+                    <div class="flex-1 min-w-0">
+                        <p class="text-sm font-bold text-slate-700"><span class="text-violet-600">${escapeHtml(entry.user)}</span> ${escapeHtml(entry.detail)}</p>
+                        <p class="text-[11px] text-slate-400 font-bold mt-0.5">${new Date(entry.timestamp).toLocaleString()}</p>
+                    </div>
+                </div>`).join('');
+        }
+
+        // ============ TEAM ANNOUNCEMENTS ============
+        function renderAnnouncements() {
+            const list = document.getElementById('announcementsList'); if (!list) return;
+            const canPost = state.currentUser && (state.currentUser.role === 'admin' || state.currentUser.role === 'manager');
+            const btn = document.getElementById('newAnnouncementBtn'); if (btn) btn.classList.toggle('hidden', !canPost);
+            const announcements = safeJsonGet('tt_announcements_v3', []);
+            if (!announcements.length) { list.innerHTML = '<p class="text-sm text-slate-400 font-medium text-center py-4">No announcements yet. Squad\'s quiet. 🌙</p>'; return; }
+            list.innerHTML = announcements.map(a => `
+                <div class="bg-white rounded-2xl p-4 border border-slate-100 shadow-sm">
+                    <div class="flex items-start justify-between gap-2">
+                        <div class="min-w-0">
+                            <h4 class="font-extrabold text-slate-800 text-sm">${escapeHtml(a.title)}</h4>
+                            <p class="text-sm text-slate-600 font-medium mt-1 whitespace-pre-wrap">${escapeHtml(a.body)}</p>
+                            <p class="text-[10px] text-slate-400 font-bold mt-2">by ${escapeHtml(a.author)} · ${new Date(a.timestamp).toLocaleString()}</p>
+                        </div>
+                        ${canPost ? `<button onclick="deleteAnnouncement('${a.id}')" class="text-slate-300 hover:text-red-500 shrink-0"><i class="fa-solid fa-trash text-sm"></i></button>` : ''}
+                    </div>
+                </div>`).join('');
+        }
+        function handleNewAnnouncement(e) {
+            e.preventDefault();
+            const title = document.getElementById('announcementTitle').value.trim(), body = document.getElementById('announcementBody').value.trim();
+            if (!title || !body) return showToast('Title and message required.', 'error');
+            const announcements = safeJsonGet('tt_announcements_v3', []);
+            announcements.unshift({ id: Date.now() + '', title, body, author: state.currentUser.username, timestamp: Date.now() });
+            safeSet('tt_announcements_v3', JSON.stringify(announcements));
+            logActivity('announcement_posted', `posted an announcement: "${title}"`);
+            document.getElementById('newAnnouncementForm').reset();
+            toggleModal('newAnnouncementModal', false);
+            renderAnnouncements();
+            showToast('Announcement posted! 📌', 'success');
+        }
+        window.deleteAnnouncement = function(id) {
+            if (!confirm('Delete this announcement?')) return;
+            let announcements = safeJsonGet('tt_announcements_v3', []);
+            announcements = announcements.filter(a => a.id !== id);
+            safeSet('tt_announcements_v3', JSON.stringify(announcements));
+            renderAnnouncements();
+            showToast('Announcement removed.', 'info');
+        };
+
+        // ============ APPEARANCE / THEME ============
+        const THEMES = [
+            { key: 'violet', name: 'Violet & Pink', swatch: 'linear-gradient(135deg,#8b5cf6,#ec4899)' },
+            { key: 'blue', name: 'Ocean Blue', swatch: 'linear-gradient(135deg,#3b82f6,#06b6d4)' },
+            { key: 'emerald', name: 'Emerald', swatch: 'linear-gradient(135deg,#10b981,#14b8a6)' },
+            { key: 'rose', name: 'Rose', swatch: 'linear-gradient(135deg,#f43f5e,#fb7185)' },
+            { key: 'amber', name: 'Amber', swatch: 'linear-gradient(135deg,#f59e0b,#fbbf24)' },
+            { key: 'indigo', name: 'Indigo', swatch: 'linear-gradient(135deg,#6366f1,#8b5cf6)' }
+        ];
+        function renderThemeSwatches() {
+            const el = document.getElementById('themeSwatches'); if (!el) return;
+            const current = safeGet('tt_theme_v3') || 'violet';
+            el.innerHTML = THEMES.map(t => `
+                <button onclick="applyTheme('${t.key}')" title="${t.name}" class="w-14 h-14 rounded-2xl border-4 ${current === t.key ? 'border-slate-800' : 'border-white'} shadow-sm hover:-translate-y-1 transition-all relative" style="background:${t.swatch}">
+                    ${current === t.key ? '<span class="absolute inset-0 flex items-center justify-center text-white text-lg">✓</span>' : ''}
+                </button>`).join('');
+        }
+        window.applyTheme = function(key) {
+            if (key === 'violet') document.documentElement.removeAttribute('data-theme');
+            else document.documentElement.setAttribute('data-theme', key);
+            safeSet('tt_theme_v3', key);
+            renderThemeSwatches();
+            showToast('Theme updated! 🎨', 'success');
+        };
+        function applyThemePreference() {
+            const t = safeGet('tt_theme_v3');
+            if (t && t !== 'violet') document.documentElement.setAttribute('data-theme', t);
+        }
+
+        // ============ ONBOARDING TOUR ============
+        const TOUR_STEPS = [
+            { selector: 'a[data-view="dashboard"]', title: 'Home Base 🏠', text: 'Your overview — stats, announcements, and quick actions all live here.' },
+            { selector: 'a[data-view="tasks"]', title: 'The Board 📋', text: 'Drag & drop task cards between To Do, Doing, and Done — synced straight to GitHub Issues.' },
+            { selector: 'a[data-view="calendar"]', title: 'Calendar 🗓️', text: 'See every task laid out by due date.' },
+            { selector: 'a[data-view="employees"]', title: 'The Squad 👯‍♀️', text: 'Meet the team. Click anyone\'s card to see their full profile.' },
+            { selector: '#notifBellBtn', title: 'Notifications 🔔', text: 'Get pinged when you\'re assigned or @mentioned in a task.' },
+            { selector: 'a[data-view="settings"]', title: 'Settings ⚙️', text: 'Update your profile, pick a theme, and (if you\'re an Admin/Manager) connect GitHub.' }
+        ];
+        let tourIndex = 0;
+        function maybeStartTour() {
+            const seenKey = `tt_tour_seen_${state.currentUser?.username || 'anon'}_v3`;
+            if (!safeGet(seenKey)) { setTimeout(() => startTour(), 600); }
+        }
+        function startTour() {
+            tourIndex = 0;
+            if (window.innerWidth < 768) document.getElementById('sidebar').classList.remove('sidebar-closed'); // reveal sidebar for the tour on mobile
+            if (!document.getElementById('tourOverlay')) buildTourOverlay();
+            document.getElementById('tourOverlay').classList.remove('hidden');
+            renderTourStep();
+        }
+        function buildTourOverlay() {
+            const div = document.createElement('div');
+            div.id = 'tourOverlay';
+            div.className = 'fixed inset-0 z-[250] hidden';
+            div.innerHTML = `<div id="tourTooltip" class="fixed bg-white rounded-3xl shadow-float p-6 max-w-xs z-[270] border border-slate-100">
+                <h4 id="tourStepTitle" class="font-extrabold text-slate-800 text-lg mb-1"></h4>
+                <p id="tourStepText" class="text-sm text-slate-500 font-medium mb-4"></p>
+                <div class="flex items-center justify-between">
+                    <button onclick="skipTour()" class="text-xs font-bold text-slate-400 hover:text-slate-600">Skip tour</button>
+                    <div class="flex items-center gap-2">
+                        <span id="tourStepCount" class="text-xs text-slate-400 font-bold"></span>
+                        <button onclick="nextTourStep()" id="tourNextBtn" class="px-4 py-2 bg-slate-800 text-white rounded-xl font-bold text-sm theme-accent-bg">Next</button>
+                    </div>
+                </div>
+            </div>`;
+            document.body.appendChild(div);
+        }
+        function renderTourStep() {
+            const step = TOUR_STEPS[tourIndex];
+            document.querySelectorAll('.tour-highlight').forEach(el => el.classList.remove('tour-highlight'));
+            if (!step) return endTour();
+            const target = document.querySelector(step.selector);
+            if (!target) { tourIndex++; return renderTourStep(); }
+            target.classList.add('tour-highlight');
+            document.getElementById('tourStepTitle').textContent = step.title;
+            document.getElementById('tourStepText').textContent = step.text;
+            document.getElementById('tourStepCount').textContent = `${tourIndex + 1}/${TOUR_STEPS.length}`;
+            document.getElementById('tourNextBtn').textContent = tourIndex === TOUR_STEPS.length - 1 ? 'Finish 🎉' : 'Next';
+            const rect = target.getBoundingClientRect();
+            const tooltip = document.getElementById('tourTooltip');
+            let top = rect.bottom + 12, left = rect.left;
+            if (top + 160 > window.innerHeight) top = Math.max(12, rect.top - 170);
+            if (left + 300 > window.innerWidth) left = window.innerWidth - 320;
+            tooltip.style.top = top + 'px'; tooltip.style.left = Math.max(12, left) + 'px';
+        }
+        window.nextTourStep = function() { tourIndex++; if (tourIndex >= TOUR_STEPS.length) endTour(); else renderTourStep(); };
+        window.skipTour = function() { endTour(); };
+        function endTour() {
+            document.querySelectorAll('.tour-highlight').forEach(el => el.classList.remove('tour-highlight'));
+            const overlay = document.getElementById('tourOverlay'); if (overlay) overlay.classList.add('hidden');
+            safeSet(`tt_tour_seen_${state.currentUser?.username || 'anon'}_v3`, 'true');
+        }
 
         // Bootstrap App
         document.addEventListener('DOMContentLoaded', init);
